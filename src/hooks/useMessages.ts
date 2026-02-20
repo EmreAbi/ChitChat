@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback, useRef } from 'react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../contexts/AuthContext'
+import { playMessageSound } from '../lib/notificationSound'
 import type { Message, Profile } from '../lib/types'
 
 export interface MessageWithSender extends Message {
@@ -67,6 +68,10 @@ export function useMessages(conversationId: string | undefined) {
           }
           setMessages(prev => {
             if (prev.some(m => m.id === newMsg.id)) return prev
+            // Play sound for incoming messages from others
+            if (newMsg.sender_id !== session?.user.id) {
+              playMessageSound()
+            }
             return [...prev, { ...newMsg, sender }]
           })
         }
