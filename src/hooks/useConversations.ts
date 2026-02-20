@@ -44,6 +44,13 @@ export function useConversations() {
           fetchConversations()
         }
       )
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'message_read_receipts' },
+        () => {
+          fetchConversations()
+        }
+      )
       .subscribe((status) => {
         console.log('Conversation updates subscription:', status)
       })
