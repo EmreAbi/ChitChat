@@ -260,3 +260,16 @@ export interface MemberInfo {
   avatar_url: string | null
   email: string
 }
+
+// Call types
+export type CallStatus = 'idle' | 'outgoing_ringing' | 'incoming_ringing' | 'connecting' | 'connected' | 'ended'
+
+export interface CallState {
+  status: CallStatus
+  conversationId: string | null
+  callLogId: string | null
+  remoteUser: { id: string; displayName: string; avatarUrl: string | null } | null
+  isMuted: boolean
+  isSpeaker: boolean
+  startedAt: number | null
+}

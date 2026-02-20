@@ -1,8 +1,9 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, useCallback } from 'react'
 import { useParams } from 'react-router'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../contexts/AuthContext'
 import { usePresenceContext } from '../contexts/PresenceContext'
+import { useCall } from '../contexts/CallContext'
 import { useMessages } from '../hooks/useMessages'
 import { useTypingIndicator } from '../hooks/useTypingIndicator'
 import ChatHeader from '../components/chat/ChatHeader'
@@ -16,6 +17,7 @@ export default function ChatViewPage() {
   const { id } = useParams<{ id: string }>()
   const { session } = useAuth()
   const { isOnline } = usePresenceContext()
+  const { startCall } = useCall()
   const { messages, loading, sendMessage } = useMessages(id)
   const { typingUsers, sendTyping, sendStopTyping } = useTypingIndicator(id)
   const [conversation, setConversation] = useState<ConversationWithDetails | null>(null)
@@ -113,6 +115,16 @@ export default function ChatViewPage() {
 
   const otherMemberCount = otherMembers.length
 
+  const handleCall = useCallback(() => {
+    if (!id || !otherMembers[0]) return
+    const member = otherMembers[0]
+    startCall(id, {
+      id: member.user_id,
+      displayName: member.display_name,
+      avatarUrl: member.avatar_url,
+    })
+  }, [id, otherMembers, startCall])
+
   function getReadStatus(messageId: string): 'sent' | 'delivered' | 'read' {
     if (readReceipts.has(messageId)) return 'read'
     if (otherMemberCount > 0) return 'delivered'
@@ -126,6 +138,8 @@ export default function ChatViewPage() {
         avatarUrl={isGroup ? conversation?.avatar_url : otherMembers[0]?.avatar_url}
         subtitle={subtitle}
         online={!isGroup && otherMembers[0] ? isOnline(otherMembers[0].user_id) : undefined}
+        showCallButton={!isGroup}
+        onCall={handleCall}
       />
 
       <div
