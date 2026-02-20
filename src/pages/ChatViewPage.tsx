@@ -50,29 +50,33 @@ export default function ChatViewPage() {
 
   // Fetch read receipts
   useEffect(() => {
-    if (!id || !session) return
+    if (!id || !session || messages.length === 0) return
+
+    const myMessageIds = messages.filter(m => m.sender_id === session.user.id).map(m => m.id)
+    if (myMessageIds.length === 0) return
+
     async function fetchReceipts() {
       const { data } = await supabase
         .from('message_read_receipts')
         .select('message_id')
-        .in(
-          'message_id',
-          messages.filter(m => m.sender_id === session!.user.id).map(m => m.id)
-        )
+        .in('message_id', myMessageIds)
       if (data) {
         setReadReceipts(new Set(data.map(r => r.message_id)))
       }
     }
-    if (messages.length > 0) fetchReceipts()
+    fetchReceipts()
 
-    // Listen for new read receipts
+    // Listen for new read receipts (no filter for reliability)
     const channel = supabase
       .channel(`receipts:${id}`)
       .on(
         'postgres_changes',
         { event: 'INSERT', schema: 'public', table: 'message_read_receipts' },
         (payload) => {
-          setReadReceipts(prev => new Set([...prev, payload.new.message_id]))
+          const receipt = payload.new as { message_id: string; user_id: string }
+          if (myMessageIds.includes(receipt.message_id)) {
+            setReadReceipts(prev => new Set([...prev, receipt.message_id]))
+          }
         }
       )
       .subscribe()
@@ -116,7 +120,7 @@ export default function ChatViewPage() {
   }
 
   return (
-    <div className="flex flex-col h-full flex-1 bg-white">
+    <div className="flex flex-col h-[100dvh] md:h-full flex-1 bg-white">
       <ChatHeader
         name={displayName}
         avatarUrl={isGroup ? conversation?.avatar_url : otherMembers[0]?.avatar_url}
@@ -127,7 +131,7 @@ export default function ChatViewPage() {
       <div
         ref={containerRef}
         onScroll={handleScroll}
-        className="flex-1 overflow-y-auto chat-bg py-2"
+        className="flex-1 overflow-y-auto chat-bg py-2 min-h-0"
       >
         {loading ? (
           <LoadingSpinner className="mt-12" />

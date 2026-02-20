@@ -25,6 +25,8 @@ export function useConversations() {
   useEffect(() => {
     fetchConversations()
 
+    if (!session) return
+
     // Listen for new messages to refresh list
     const channel = supabase
       .channel('conversation-updates')
@@ -42,12 +44,14 @@ export function useConversations() {
           fetchConversations()
         }
       )
-      .subscribe()
+      .subscribe((status) => {
+        console.log('Conversation updates subscription:', status)
+      })
 
     return () => {
       supabase.removeChannel(channel)
     }
-  }, [fetchConversations])
+  }, [fetchConversations, session])
 
   return { conversations, loading, refetch: fetchConversations }
 }

@@ -37,6 +37,8 @@ export function useMessages(conversationId: string | undefined) {
 
     if (!conversationId) return
 
+    // Subscribe to ALL inserts on messages table (no filter) - more reliable
+    // Then filter client-side
     const channel = supabase
       .channel(`messages:${conversationId}`)
       .on(
@@ -45,10 +47,12 @@ export function useMessages(conversationId: string | undefined) {
           event: 'INSERT',
           schema: 'public',
           table: 'messages',
-          filter: `conversation_id=eq.${conversationId}`,
         },
         async (payload) => {
           const newMsg = payload.new as Message
+          // Client-side filter for this conversation
+          if (newMsg.conversation_id !== conversationId) return
+
           let sender = profileCache.current.get(newMsg.sender_id) ?? null
           if (!sender) {
             const { data } = await supabase
@@ -67,7 +71,9 @@ export function useMessages(conversationId: string | undefined) {
           })
         }
       )
-      .subscribe()
+      .subscribe((status) => {
+        console.log(`Realtime subscription status for messages:${conversationId}:`, status)
+      })
 
     return () => {
       supabase.removeChannel(channel)

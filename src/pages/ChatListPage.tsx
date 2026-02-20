@@ -26,7 +26,7 @@ export default function ChatListPage() {
     <div className="relative flex flex-col h-full w-full bg-white">
       {/* Header */}
       <header className="bg-header-bg text-header-text px-4 py-3 flex items-center justify-between shadow-md z-10">
-        <h1 className="text-xl font-bold">ChitChat</h1>
+        <h1 className="text-xl font-bold">ESA</h1>
         <div className="flex items-center gap-2">
           <button
             onClick={() => navigate('/new-group')}
