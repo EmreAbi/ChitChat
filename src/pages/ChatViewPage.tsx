@@ -98,10 +98,21 @@ export default function ChatViewPage() {
     setShowScrollBtn(scrollHeight - scrollTop - clientHeight > 200)
   }
 
-  if (!id) return null
-
   const otherMembers = conversation?.members.filter(m => m.user_id !== session?.user.id) ?? []
   const isGroup = conversation?.type === 'group'
+
+  const handleCall = useCallback(() => {
+    if (!id || !otherMembers[0]) return
+    const member = otherMembers[0]
+    startCall(id, {
+      id: member.user_id,
+      displayName: member.display_name,
+      avatarUrl: member.avatar_url,
+    })
+  }, [id, otherMembers, startCall])
+
+  if (!id) return null
+
   const displayName = isGroup
     ? conversation?.name || 'Group'
     : otherMembers[0]?.display_name || 'Chat'
@@ -114,16 +125,6 @@ export default function ChatViewPage() {
   }
 
   const otherMemberCount = otherMembers.length
-
-  const handleCall = useCallback(() => {
-    if (!id || !otherMembers[0]) return
-    const member = otherMembers[0]
-    startCall(id, {
-      id: member.user_id,
-      displayName: member.display_name,
-      avatarUrl: member.avatar_url,
-    })
-  }, [id, otherMembers, startCall])
 
   function getReadStatus(messageId: string): 'sent' | 'delivered' | 'read' {
     if (readReceipts.has(messageId)) return 'read'
