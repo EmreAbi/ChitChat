@@ -11,7 +11,7 @@ import { supabase } from '../lib/supabase'
 import { useAuth } from './AuthContext'
 import { getTurnCredentials } from '../lib/turnCredentials'
 import { playRingtone, playRingback, stopAllTones } from '../lib/ringtoneSound'
-import type { CallState, CallStatus } from '../lib/types'
+import type { CallState } from '../lib/types'
 
 // --- Actions ---
 
@@ -131,7 +131,7 @@ export function CallProvider({ children }: { children: ReactNode }) {
 
   // --- Create WebRTC Peer Connection ---
 
-  const createPeerConnection = useCallback(async (callLogId: string) => {
+  const createPeerConnection = useCallback(async (_callLogId: string) => {
     const iceServers = await getTurnCredentials()
     const pc = new RTCPeerConnection({ iceServers })
     peerConnection.current = pc
@@ -176,7 +176,7 @@ export function CallProvider({ children }: { children: ReactNode }) {
 
   // --- Join session channel for WebRTC signaling ---
 
-  const joinSessionChannel = useCallback((callLogId: string, isCaller: boolean) => {
+  const joinSessionChannel = useCallback((callLogId: string, _isCaller: boolean) => {
     const channel = supabase.channel(`call:session:${callLogId}`, {
       config: { broadcast: { self: false } },
     })

@@ -12,6 +12,64 @@ export type Database = {
   }
   public: {
     Tables: {
+      call_logs: {
+        Row: {
+          id: string
+          conversation_id: string
+          caller_id: string
+          callee_id: string
+          status: string
+          started_at: string
+          answered_at: string | null
+          ended_at: string | null
+          duration_seconds: number | null
+        }
+        Insert: {
+          id?: string
+          conversation_id: string
+          caller_id: string
+          callee_id: string
+          status?: string
+          started_at?: string
+          answered_at?: string | null
+          ended_at?: string | null
+          duration_seconds?: number | null
+        }
+        Update: {
+          id?: string
+          conversation_id?: string
+          caller_id?: string
+          callee_id?: string
+          status?: string
+          started_at?: string
+          answered_at?: string | null
+          ended_at?: string | null
+          duration_seconds?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "call_logs_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "conversations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "call_logs_caller_id_fkey"
+            columns: ["caller_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "call_logs_callee_id_fkey"
+            columns: ["callee_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       conversation_members: {
         Row: {
           conversation_id: string
