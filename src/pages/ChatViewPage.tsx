@@ -276,13 +276,26 @@ export default function ChatViewPage() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm" onClick={() => setShowCallModal(false)}>
           <div className="bg-[#0f1f18] rounded-3xl border border-stroke-soft shadow-2xl p-6 mx-4 max-w-sm w-full" onClick={e => e.stopPropagation()}>
             <h3 className="text-sm font-semibold text-text-primary mb-4 text-center mono-ui">{t('voiceEffect.selectTitle')}</h3>
-            <div className="grid grid-cols-2 gap-2 mb-5">
-              {VOICE_EFFECTS.map(ve => (
+            {/* Normal - large primary option */}
+            <button
+              type="button"
+              onClick={() => setSelectedEffect('normal')}
+              className={`w-full py-3 rounded-xl text-sm font-semibold transition-colors border mb-3 ${
+                selectedEffect === 'normal'
+                  ? 'bg-whatsapp-teal/20 border-whatsapp-green text-whatsapp-green'
+                  : 'bg-[#13261d] border-stroke-soft text-text-primary hover:bg-[#183329]'
+              }`}
+            >
+              {t('voiceEffect.normal')}
+            </button>
+            {/* Other effects - smaller buttons */}
+            <div className="grid grid-cols-4 gap-1.5 mb-5">
+              {VOICE_EFFECTS.filter(ve => ve.id !== 'normal').map(ve => (
                 <button
                   key={ve.id}
                   type="button"
                   onClick={() => setSelectedEffect(ve.id)}
-                  className={`px-3 py-2.5 rounded-xl text-sm font-medium transition-colors border ${
+                  className={`px-2 py-2 rounded-xl text-xs font-medium transition-colors border ${
                     selectedEffect === ve.id
                       ? 'bg-whatsapp-teal/20 border-whatsapp-green text-whatsapp-green'
                       : 'bg-[#13261d] border-stroke-soft text-text-muted hover:bg-[#183329]'

@@ -15,7 +15,6 @@ export default function NewRoomPage() {
   const [selected, setSelected] = useState<Set<string>>(new Set())
   const [search, setSearch] = useState('')
   const [groupName, setGroupName] = useState('')
-  const [groupNameEdited, setGroupNameEdited] = useState(false)
   const [loading, setLoading] = useState(true)
   const [creating, setCreating] = useState(false)
   const [submitError, setSubmitError] = useState('')
@@ -38,14 +37,6 @@ export default function NewRoomPage() {
     [users, selected],
   )
 
-  const suggestedRoomName = useMemo(() => {
-    if (selectedUsers.length === 0) return ''
-    const preview = selectedUsers.slice(0, 3).map(user => user.display_name)
-    const extraCount = selectedUsers.length - preview.length
-    return extraCount > 0 ? `${preview.join(', ')} +${extraCount}` : preview.join(', ')
-  }, [selectedUsers])
-  const effectiveGroupName = groupNameEdited ? groupName.trim() : suggestedRoomName.trim()
-
   const filtered = useMemo(() => {
     if (!search) return users
     return users.filter(user =>
@@ -63,7 +54,7 @@ export default function NewRoomPage() {
   }
 
   async function createRoom() {
-    if (!session || !effectiveGroupName || selected.size < 1 || creating) return
+    if (!session || !groupName.trim() || selected.size < 1 || creating) return
     setCreating(true)
     setSubmitError('')
 
@@ -71,7 +62,7 @@ export default function NewRoomPage() {
       .from('conversations')
       .insert({
         type: 'group',
-        name: effectiveGroupName,
+        name: groupName.trim(),
         created_by: session.user.id,
       })
       .select()
@@ -114,10 +105,10 @@ export default function NewRoomPage() {
     navigate(`/chat/${conv.id}`, { replace: true })
   }
 
-  const canCreate = Boolean(effectiveGroupName && selected.size > 0 && !creating)
+  const canCreate = Boolean(groupName.trim() && selected.size > 0 && !creating)
   const helperText = selected.size < 1
     ? t('newGroup.minMembersHint')
-    : !effectiveGroupName
+    : !groupName.trim()
       ? t('newGroup.nameRequired')
       : t('newGroup.readyHint', { count: selected.size })
 
@@ -145,11 +136,8 @@ export default function NewRoomPage() {
           <input
             type="text"
             placeholder={t('newGroup.groupNamePlaceholder')}
-            value={groupNameEdited ? groupName : suggestedRoomName}
-            onChange={event => {
-              setGroupName(event.target.value)
-              if (!groupNameEdited) setGroupNameEdited(true)
-            }}
+            value={groupName}
+            onChange={event => setGroupName(event.target.value)}
             className="w-full px-4 py-3 rounded-xl border border-stroke-soft bg-[#0f2119] text-text-primary focus:border-whatsapp-teal/60 focus:ring-2 focus:ring-whatsapp-teal/20 outline-none text-sm"
           />
           <p className="text-xs text-text-muted">{t('newGroup.nameHint')}</p>

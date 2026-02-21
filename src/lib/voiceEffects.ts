@@ -1,6 +1,7 @@
-export type VoiceEffect = 'disguise' | 'shadow' | 'phantom' | 'cyber'
+export type VoiceEffect = 'normal' | 'disguise' | 'shadow' | 'phantom' | 'cyber'
 
 export const VOICE_EFFECTS: { id: VoiceEffect; labelKey: string }[] = [
+  { id: 'normal', labelKey: 'voiceEffect.normal' },
   { id: 'disguise', labelKey: 'voiceEffect.disguise' },
   { id: 'shadow', labelKey: 'voiceEffect.shadow' },
   { id: 'phantom', labelKey: 'voiceEffect.phantom' },
@@ -8,14 +9,14 @@ export const VOICE_EFFECTS: { id: VoiceEffect; labelKey: string }[] = [
 ]
 
 const STORAGE_KEY = 'chitchat_voice_effect'
-const VALID_EFFECTS: VoiceEffect[] = ['disguise', 'shadow', 'phantom', 'cyber']
+const VALID_EFFECTS: VoiceEffect[] = ['normal', 'disguise', 'shadow', 'phantom', 'cyber']
 
 export function getStoredVoiceEffect(): VoiceEffect {
   const stored = localStorage.getItem(STORAGE_KEY)
   if (stored && VALID_EFFECTS.includes(stored as VoiceEffect)) {
     return stored as VoiceEffect
   }
-  return 'disguise'
+  return 'normal'
 }
 
 export function setStoredVoiceEffect(effect: VoiceEffect): void {
@@ -108,6 +109,11 @@ export async function applyVoiceEffect(
   source: MediaStreamAudioSourceNode,
   effect: VoiceEffect
 ): Promise<AudioNode> {
+  if (effect === 'normal') {
+    // Passthrough: no processing
+    return source
+  }
+
   await ensureWorklet(audioContext)
 
   switch (effect) {

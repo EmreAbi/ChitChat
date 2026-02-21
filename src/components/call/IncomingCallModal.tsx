@@ -42,13 +42,26 @@ export default function IncomingCallModal() {
         {/* Voice effect selector */}
         <div className="mb-6">
           <p className="text-xs text-text-muted mb-2 mono-ui">{t('voiceEffect.selectTitle')}</p>
-          <div className="grid grid-cols-2 gap-2">
-            {VOICE_EFFECTS.map(ve => (
+          {/* Normal - large primary option */}
+          <button
+            type="button"
+            onClick={() => setSelectedEffect('normal')}
+            className={`w-full py-2.5 rounded-xl text-sm font-semibold transition-colors border mb-2 ${
+              selectedEffect === 'normal'
+                ? 'bg-whatsapp-teal/20 border-whatsapp-green text-whatsapp-green'
+                : 'bg-[#13261d] border-stroke-soft text-text-primary hover:bg-[#183329]'
+            }`}
+          >
+            {t('voiceEffect.normal')}
+          </button>
+          {/* Other effects - smaller buttons */}
+          <div className="grid grid-cols-4 gap-1.5">
+            {VOICE_EFFECTS.filter(ve => ve.id !== 'normal').map(ve => (
               <button
                 key={ve.id}
                 type="button"
                 onClick={() => setSelectedEffect(ve.id)}
-                className={`px-3 py-2 rounded-xl text-sm font-medium transition-colors border ${
+                className={`px-2 py-2 rounded-xl text-xs font-medium transition-colors border ${
                   selectedEffect === ve.id
                     ? 'bg-whatsapp-teal/20 border-whatsapp-green text-whatsapp-green'
                     : 'bg-[#13261d] border-stroke-soft text-text-muted hover:bg-[#183329]'

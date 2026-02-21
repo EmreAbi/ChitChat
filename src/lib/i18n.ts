@@ -181,6 +181,7 @@ const translations: Record<Lang, Record<string, string>> = {
 
     // Voice Effects
     'profile.voiceEffect': 'VOICE EFFECT',
+    'voiceEffect.normal': 'Normal',
     'voiceEffect.disguise': 'Disguise',
     'voiceEffect.shadow': 'Shadow',
     'voiceEffect.phantom': 'Phantom',
@@ -382,6 +383,7 @@ const translations: Record<Lang, Record<string, string>> = {
 
     // Voice Effects
     'profile.voiceEffect': 'SES EFEKTI',
+    'voiceEffect.normal': 'Normal',
     'voiceEffect.disguise': 'Gizle',
     'voiceEffect.shadow': 'Golge',
     'voiceEffect.phantom': 'Hayalet',
