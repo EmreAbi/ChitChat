@@ -76,7 +76,9 @@ export default function ChatViewPage() {
   // Mark messages as read
   useEffect(() => {
     if (!id || !session) return
-    supabase.rpc('mark_messages_read', { p_conversation_id: id })
+    supabase.rpc('mark_messages_read', { p_conversation_id: id }).then(({ error }) => {
+      if (error) console.error('[mark_messages_read] failed:', error)
+    })
   }, [id, session, messages.length])
 
   // Fetch read receipts
