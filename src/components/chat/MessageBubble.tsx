@@ -36,7 +36,7 @@ function ImageContent({ url, name }: { url: string; name: string }) {
   )
 }
 
-function FileContent({ url, name, size, mimeType }: { url: string; name: string; size: number; mimeType: string }) {
+function FileContent({ url, name, size }: { url: string; name: string; size: number }) {
   const ext = name.split('.').pop()?.toUpperCase() || ''
   return (
     <a
@@ -89,7 +89,7 @@ export default function MessageBubble({ message, isOwn, showSender, readStatus }
         {fileContent && isImageMimeType(fileContent.mimeType) ? (
           <ImageContent url={fileContent.url} name={fileContent.name} />
         ) : fileContent ? (
-          <FileContent url={fileContent.url} name={fileContent.name} size={fileContent.size} mimeType={fileContent.mimeType} />
+          <FileContent url={fileContent.url} name={fileContent.name} size={fileContent.size} />
         ) : (
           <p className="text-sm leading-relaxed text-gray-800 whitespace-pre-wrap break-words">
             {message.content}
