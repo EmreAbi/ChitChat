@@ -7,7 +7,7 @@ import Avatar from '../components/common/Avatar'
 import LoadingSpinner from '../components/common/LoadingSpinner'
 import type { Profile } from '../lib/types'
 
-export default function NewGroupPage() {
+export default function NewRoomPage() {
   const navigate = useNavigate()
   const { session } = useAuth()
   const { t } = useT()
@@ -47,7 +47,7 @@ export default function NewGroupPage() {
     })
   }
 
-  async function createGroup() {
+  async function createRoom() {
     if (!session || !groupName.trim() || selected.size < 1) return
     setCreating(true)
 
@@ -86,7 +86,7 @@ export default function NewGroupPage() {
     await supabase.from('messages').insert({
       conversation_id: conv.id,
       sender_id: session.user.id,
-      content: `Group created with ${selectedNames}`,
+      content: `Room created with ${selectedNames}`,
       type: 'system',
     })
 
@@ -134,7 +134,7 @@ export default function NewGroupPage() {
 
         <div className="mt-auto p-4">
           <button
-            onClick={createGroup}
+            onClick={createRoom}
             disabled={!groupName.trim() || creating}
             className="w-full py-3 bg-whatsapp-green text-[#06110d] rounded-xl font-semibold hover:bg-[#72ffb4] transition-colors disabled:opacity-50"
           >

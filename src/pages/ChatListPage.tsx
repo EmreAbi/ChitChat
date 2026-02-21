@@ -66,7 +66,7 @@ export default function ChatListPage() {
         </div>
         <div className="flex items-center gap-1.5">
           <button
-            onClick={() => navigate('/new-group')}
+            onClick={() => navigate('/new-room')}
             className="p-2 hover:bg-whatsapp-green/10 rounded-xl transition-colors"
             title={t('chatList.newGroup')}
             aria-label={t('chatList.newGroupAria')}

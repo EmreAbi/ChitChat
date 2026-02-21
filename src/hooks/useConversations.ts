@@ -46,6 +46,13 @@ export function useConversations() {
       )
       .on(
         'postgres_changes',
+        { event: 'UPDATE', schema: 'public', table: 'conversation_members' },
+        () => {
+          fetchConversations()
+        }
+      )
+      .on(
+        'postgres_changes',
         { event: 'INSERT', schema: 'public', table: 'message_read_receipts' },
         () => {
           fetchConversations()

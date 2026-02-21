@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { useParams } from 'react-router'
+import { useParams, useNavigate } from 'react-router'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../contexts/AuthContext'
 import { useT } from '../contexts/LanguageContext'
@@ -26,6 +26,7 @@ function toDayKey(dateStr: string): string {
 
 export default function ChatViewPage() {
   const { id } = useParams<{ id: string }>()
+  const navigate = useNavigate()
   const { session } = useAuth()
   const { lang, t } = useT()
   const { isOnline } = usePresenceContext()
@@ -75,11 +76,14 @@ export default function ChatViewPage() {
             ...conv,
             members: (conv.members as unknown as MemberInfo[]) || [],
           })
+        } else {
+          // User is not a member (removed/left) - redirect to home
+          navigate('/', { replace: true })
         }
       }
     }
     fetchConversation()
-  }, [id])
+  }, [id, navigate])
 
   // Mark messages as read
   useEffect(() => {
@@ -205,6 +209,7 @@ export default function ChatViewPage() {
         online={!isGroup && otherMembers[0] ? isOnline(otherMembers[0].user_id) : undefined}
         showCallButton={true}
         onCall={handleCallClick}
+        onHeaderClick={isGroup ? () => navigate(`/room/${id}/settings`) : undefined}
       />
 
       <div

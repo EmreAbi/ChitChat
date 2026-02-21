@@ -9,9 +9,10 @@ interface ChatHeaderProps {
   online?: boolean
   onCall?: () => void
   showCallButton?: boolean
+  onHeaderClick?: () => void
 }
 
-export default function ChatHeader({ name, avatarUrl, subtitle, online, onCall, showCallButton }: ChatHeaderProps) {
+export default function ChatHeader({ name, avatarUrl, subtitle, online, onCall, showCallButton, onHeaderClick }: ChatHeaderProps) {
   const navigate = useNavigate()
   const { t } = useT()
 
@@ -27,7 +28,10 @@ export default function ChatHeader({ name, avatarUrl, subtitle, online, onCall, 
         </svg>
       </button>
       <Avatar name={name} avatarUrl={avatarUrl} size="sm" online={online} />
-      <div className="flex-1 min-w-0">
+      <div
+        className={`flex-1 min-w-0 ${onHeaderClick ? 'cursor-pointer hover:opacity-80 transition-opacity' : ''}`}
+        onClick={onHeaderClick}
+      >
         <h2 className="font-semibold text-sm truncate tracking-wide">{name}</h2>
         <p className="text-[11px] text-text-muted truncate mono-ui">
           {subtitle || t('chatHeader.secureChannel')}

@@ -75,6 +75,7 @@ export type Database = {
           conversation_id: string
           id: string
           joined_at: string
+          left_at: string | null
           role: string
           user_id: string
         }
@@ -82,6 +83,7 @@ export type Database = {
           conversation_id: string
           id?: string
           joined_at?: string
+          left_at?: string | null
           role?: string
           user_id: string
         }
@@ -89,6 +91,7 @@ export type Database = {
           conversation_id?: string
           id?: string
           joined_at?: string
+          left_at?: string | null
           role?: string
           user_id?: string
         }
@@ -266,6 +269,7 @@ export type Database = {
         Returns: {
           avatar_url: string
           created_at: string
+          created_by: string
           id: string
           last_message_at: string
           last_message_content: string
@@ -306,6 +310,7 @@ export interface ConversationWithDetails {
   name: string | null
   avatar_url: string | null
   created_at: string
+  created_by: string | null
   last_message_content: string | null
   last_message_at: string | null
   last_message_sender_id: string | null
@@ -319,6 +324,7 @@ export interface MemberInfo {
   display_name: string
   avatar_url: string | null
   email: string
+  role: string
 }
 
 // File message types

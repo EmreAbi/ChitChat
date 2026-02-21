@@ -50,15 +50,15 @@ const translations: Record<Lang, Record<string, string>> = {
     'chatList.title': 'ESA Node',
     'chatList.unread': 'unread',
     'chatList.allClear': 'all clear',
-    'chatList.newGroup': 'New team',
-    'chatList.newGroupAria': 'Create new team',
+    'chatList.newGroup': 'New room',
+    'chatList.newGroupAria': 'Create new room',
     'chatList.menu': 'Menu',
     'chatList.profile': 'Profile',
     'chatList.signOut': 'Sign Out',
     'chatList.searchPlaceholder': 'Search secure channels',
     'chatList.filterAll': 'All',
     'chatList.filterUnread': 'Unread',
-    'chatList.filterGroups': 'Teams',
+    'chatList.filterGroups': 'Rooms',
     'chatList.emptyTitle': 'No chats yet',
     'chatList.emptyDescription': 'Start a new chat using the button below.',
     'chatList.newChatAria': 'Start new chat',
@@ -66,7 +66,7 @@ const translations: Record<Lang, Record<string, string>> = {
     // Chat View
     'chat.today': 'Today',
     'chat.yesterday': 'Yesterday',
-    'chat.group': 'Group',
+    'chat.group': 'Room',
     'chat.secureChat': 'Secure Chat',
     'chat.online': 'online',
     'chat.scrollDown': 'Scroll to bottom',
@@ -77,17 +77,51 @@ const translations: Record<Lang, Record<string, string>> = {
     'newChat.searchPlaceholder': 'Search contacts...',
     'newChat.noResults': 'No contacts found',
 
-    // New Group
-    'newGroup.title': 'Team Channel',
+    // New Room
+    'newGroup.title': 'Room Channel',
     'newGroup.configureMembers': 'configure members',
     'newGroup.selectMembers': 'select members',
-    'newGroup.groupNamePlaceholder': 'Group name',
+    'newGroup.groupNamePlaceholder': 'Room name',
     'newGroup.members': 'Members:',
     'newGroup.creating': 'Creating...',
-    'newGroup.create': 'Create Group',
+    'newGroup.create': 'Create Room',
     'newGroup.searchPlaceholder': 'Search people...',
     'newGroup.next': 'Next',
     'newGroup.selected': 'selected',
+
+    // Room Settings
+    'roomSettings.title': 'Room Settings',
+    'roomSettings.roomName': 'ROOM NAME',
+    'roomSettings.members': 'MEMBERS',
+    'roomSettings.memberCount': '{count} members',
+    'roomSettings.addMember': 'Add Member',
+    'roomSettings.removeMember': 'Remove',
+    'roomSettings.leaveRoom': 'Leave Room',
+    'roomSettings.admin': 'Admin',
+    'roomSettings.member': 'Member',
+    'roomSettings.lastAdminWarning': 'You are the last admin and cannot leave the room.',
+    'roomSettings.saveName': 'Save',
+    'roomSettings.saving': 'Saving...',
+
+    // Add Member
+    'addMember.title': 'Add Member',
+    'addMember.searchPlaceholder': 'Search people...',
+    'addMember.noResults': 'No users found',
+    'addMember.adding': 'Adding...',
+
+    // Confirm Dialog
+    'confirm.removeMember': 'Remove Member',
+    'confirm.removeMemberMessage': 'Are you sure you want to remove {name} from this room?',
+    'confirm.leaveRoom': 'Leave Room',
+    'confirm.leaveRoomMessage': 'Are you sure you want to leave this room?',
+    'confirm.confirm': 'Confirm',
+    'confirm.cancel': 'Cancel',
+
+    // System Messages
+    'system.memberAdded': '{name} was added to the room',
+    'system.memberRemoved': '{name} was removed from the room',
+    'system.memberLeft': '{name} left the room',
+    'system.roomCreated': 'Room created with {names}',
 
     // Chat Header
     'chatHeader.backAria': 'Back to chat list',
@@ -103,7 +137,7 @@ const translations: Record<Lang, Record<string, string>> = {
 
     // Chat List Item
     'chatListItem.yesterday': 'Yesterday',
-    'chatListItem.group': 'Group',
+    'chatListItem.group': 'Room',
     'chatListItem.unknown': 'Unknown',
     'chatListItem.photo': 'Photo',
     'chatListItem.file': 'File',
@@ -197,15 +231,15 @@ const translations: Record<Lang, Record<string, string>> = {
     'chatList.title': 'ESA Node',
     'chatList.unread': 'okunmamis',
     'chatList.allClear': 'hepsi okundu',
-    'chatList.newGroup': 'Yeni ekip',
-    'chatList.newGroupAria': 'Yeni ekip olustur',
+    'chatList.newGroup': 'Yeni oda',
+    'chatList.newGroupAria': 'Yeni oda olustur',
     'chatList.menu': 'Menu',
     'chatList.profile': 'Profil',
     'chatList.signOut': 'Cikis Yap',
     'chatList.searchPlaceholder': 'Guvenli kanallarda ara',
     'chatList.filterAll': 'Tumu',
     'chatList.filterUnread': 'Okunmamis',
-    'chatList.filterGroups': 'Ekipler',
+    'chatList.filterGroups': 'Odalar',
     'chatList.emptyTitle': 'Henuz sohbet yok',
     'chatList.emptyDescription': 'Asagidaki butondan yeni bir sohbet baslatabilirsin.',
     'chatList.newChatAria': 'Yeni sohbet baslat',
@@ -213,7 +247,7 @@ const translations: Record<Lang, Record<string, string>> = {
     // Chat View
     'chat.today': 'Bugun',
     'chat.yesterday': 'Dun',
-    'chat.group': 'Grup',
+    'chat.group': 'Oda',
     'chat.secureChat': 'Guvenli Sohbet',
     'chat.online': 'cevrimici',
     'chat.scrollDown': 'En alta git',
@@ -224,17 +258,51 @@ const translations: Record<Lang, Record<string, string>> = {
     'newChat.searchPlaceholder': 'Kisi ara...',
     'newChat.noResults': 'Kisi bulunamadi',
 
-    // New Group
-    'newGroup.title': 'Ekip Kanali',
+    // New Room
+    'newGroup.title': 'Oda Kanali',
     'newGroup.configureMembers': 'uyeleri yapilandir',
     'newGroup.selectMembers': 'uyeleri sec',
-    'newGroup.groupNamePlaceholder': 'Grup adi',
+    'newGroup.groupNamePlaceholder': 'Oda adi',
     'newGroup.members': 'Uyeler:',
     'newGroup.creating': 'Olusturuluyor...',
-    'newGroup.create': 'Grup Olustur',
+    'newGroup.create': 'Oda Olustur',
     'newGroup.searchPlaceholder': 'Kisi ara...',
     'newGroup.next': 'Ileri',
     'newGroup.selected': 'secili',
+
+    // Room Settings
+    'roomSettings.title': 'Oda Ayarlari',
+    'roomSettings.roomName': 'ODA ADI',
+    'roomSettings.members': 'UYELER',
+    'roomSettings.memberCount': '{count} uye',
+    'roomSettings.addMember': 'Uye Ekle',
+    'roomSettings.removeMember': 'Cikar',
+    'roomSettings.leaveRoom': 'Odadan Ayril',
+    'roomSettings.admin': 'Admin',
+    'roomSettings.member': 'Uye',
+    'roomSettings.lastAdminWarning': 'Son admin oldugunuz icin odadan ayrilamazsiniz.',
+    'roomSettings.saveName': 'Kaydet',
+    'roomSettings.saving': 'Kaydediliyor...',
+
+    // Add Member
+    'addMember.title': 'Uye Ekle',
+    'addMember.searchPlaceholder': 'Kisi ara...',
+    'addMember.noResults': 'Kullanici bulunamadi',
+    'addMember.adding': 'Ekleniyor...',
+
+    // Confirm Dialog
+    'confirm.removeMember': 'Uye Cikar',
+    'confirm.removeMemberMessage': '{name} adli uyeyi bu odadan cikarmak istediginize emin misiniz?',
+    'confirm.leaveRoom': 'Odadan Ayril',
+    'confirm.leaveRoomMessage': 'Bu odadan ayrilmak istediginize emin misiniz?',
+    'confirm.confirm': 'Onayla',
+    'confirm.cancel': 'Iptal',
+
+    // System Messages
+    'system.memberAdded': '{name} odaya eklendi',
+    'system.memberRemoved': '{name} odadan cikarildi',
+    'system.memberLeft': '{name} odadan ayrildi',
+    'system.roomCreated': '{names} ile oda olusturuldu',
 
     // Chat Header
     'chatHeader.backAria': 'Sohbet listesine don',
@@ -250,7 +318,7 @@ const translations: Record<Lang, Record<string, string>> = {
 
     // Chat List Item
     'chatListItem.yesterday': 'Dun',
-    'chatListItem.group': 'Grup',
+    'chatListItem.group': 'Oda',
     'chatListItem.unknown': 'Bilinmeyen',
     'chatListItem.photo': 'Fotograf',
     'chatListItem.file': 'Dosya',

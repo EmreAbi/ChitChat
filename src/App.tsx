@@ -11,7 +11,8 @@ import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
 import ChatViewPage from './pages/ChatViewPage'
 import NewChatPage from './pages/NewChatPage'
-import NewGroupPage from './pages/NewGroupPage'
+import NewRoomPage from './pages/NewRoomPage'
+import RoomSettingsPage from './pages/RoomSettingsPage'
 import ProfilePage from './pages/ProfilePage'
 
 export default function App() {
@@ -29,7 +30,8 @@ export default function App() {
                   <Route path="/" element={null} />
                   <Route path="/chat/:id" element={<ChatViewPage />} />
                   <Route path="/new-chat" element={<NewChatPage />} />
-                  <Route path="/new-group" element={<NewGroupPage />} />
+                  <Route path="/new-room" element={<NewRoomPage />} />
+                  <Route path="/room/:id/settings" element={<RoomSettingsPage />} />
                   <Route path="/profile" element={<ProfilePage />} />
                 </Route>
               </Route>
