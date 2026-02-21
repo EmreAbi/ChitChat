@@ -43,7 +43,7 @@ export default function RegisterPage() {
 
     // Check system password
     const { data: settings, error: settingsError } = await supabase
-      .from('app_settings')
+      .from('app_settings' as any)
       .select('value')
       .eq('key', 'registration_password')
       .single()
@@ -54,7 +54,7 @@ export default function RegisterPage() {
       return
     }
 
-    if (settings.value !== systemPassword) {
+    if ((settings as any).value !== systemPassword) {
       setError(t('register.wrongSystemPassword'))
       setSubmitting(false)
       return
