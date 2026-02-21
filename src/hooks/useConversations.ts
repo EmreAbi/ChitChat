@@ -27,40 +27,50 @@ export function useConversations() {
 
     if (!session) return
 
-    // Listen for new messages to refresh list
+    // Listen for changes to refresh list
     const channel = supabase
       .channel('conversation-updates')
       .on(
         'postgres_changes',
         { event: 'INSERT', schema: 'public', table: 'messages' },
-        () => {
-          fetchConversations()
-        }
+        () => fetchConversations()
       )
       .on(
         'postgres_changes',
         { event: 'INSERT', schema: 'public', table: 'conversation_members' },
-        () => {
-          fetchConversations()
-        }
+        () => fetchConversations()
       )
       .on(
         'postgres_changes',
         { event: 'UPDATE', schema: 'public', table: 'conversation_members' },
-        () => {
-          fetchConversations()
-        }
+        () => fetchConversations()
+      )
+      .on(
+        'postgres_changes',
+        { event: 'DELETE', schema: 'public', table: 'conversation_members' },
+        () => fetchConversations()
       )
       .on(
         'postgres_changes',
         { event: 'INSERT', schema: 'public', table: 'message_read_receipts' },
-        () => {
-          fetchConversations()
-        }
+        () => fetchConversations()
       )
-      .subscribe((status) => {
-        console.log('Conversation updates subscription:', status)
-      })
+      .on(
+        'postgres_changes',
+        { event: 'UPDATE', schema: 'public', table: 'conversations' },
+        () => fetchConversations()
+      )
+      .on(
+        'postgres_changes',
+        { event: 'DELETE', schema: 'public', table: 'conversations' },
+        () => fetchConversations()
+      )
+      .on(
+        'postgres_changes',
+        { event: 'UPDATE', schema: 'public', table: 'profiles' },
+        () => fetchConversations()
+      )
+      .subscribe()
 
     return () => {
       supabase.removeChannel(channel)
