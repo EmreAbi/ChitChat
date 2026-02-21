@@ -12,7 +12,7 @@ import type { ConversationWithDetails, MemberInfo } from '../lib/types'
 export default function RoomSettingsPage() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
-  const { session } = useAuth()
+  const { session, profile } = useAuth()
   const { t } = useT()
   const [conversation, setConversation] = useState<ConversationWithDetails | null>(null)
   const [loading, setLoading] = useState(true)
@@ -34,7 +34,7 @@ export default function RoomSettingsPage() {
         }
         setConversation(parsed)
         setRoomName(parsed.name || '')
-      } else {
+      } else if (!profile?.is_system_admin) {
         navigate('/', { replace: true })
       }
     }
@@ -56,7 +56,7 @@ export default function RoomSettingsPage() {
   if (!conversation || !session) return null
 
   const currentMember = conversation.members.find(m => m.user_id === session.user.id)
-  const isAdmin = currentMember?.role === 'admin'
+  const isAdmin = currentMember?.role === 'admin' || profile?.is_system_admin === true
   const adminCount = conversation.members.filter(m => m.role === 'admin').length
   const isLastAdmin = isAdmin && adminCount <= 1
 
@@ -183,19 +183,21 @@ export default function RoomSettingsPage() {
         </div>
       </div>
 
-      {/* Leave room button */}
-      <div className="p-4 border-t border-stroke-soft">
-        {isLastAdmin ? (
-          <p className="text-xs text-text-muted text-center">{t('roomSettings.lastAdminWarning')}</p>
-        ) : (
-          <button
-            onClick={() => setConfirmLeave(true)}
-            className="w-full py-3 rounded-xl text-sm font-semibold bg-red-500/15 border border-red-500/30 text-red-400 hover:bg-red-500/25 transition-colors"
-          >
-            {t('roomSettings.leaveRoom')}
-          </button>
-        )}
-      </div>
+      {/* Leave room button - only show if user is a member */}
+      {currentMember && (
+        <div className="p-4 border-t border-stroke-soft">
+          {isLastAdmin ? (
+            <p className="text-xs text-text-muted text-center">{t('roomSettings.lastAdminWarning')}</p>
+          ) : (
+            <button
+              onClick={() => setConfirmLeave(true)}
+              className="w-full py-3 rounded-xl text-sm font-semibold bg-red-500/15 border border-red-500/30 text-red-400 hover:bg-red-500/25 transition-colors"
+            >
+              {t('roomSettings.leaveRoom')}
+            </button>
+          )}
+        </div>
+      )}
 
       {/* Modals */}
       {showAddMember && (

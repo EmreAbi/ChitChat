@@ -178,6 +178,16 @@ const translations: Record<Lang, Record<string, string>> = {
     'voiceEffect.selectTitle': 'Select Voice Effect',
     'voiceEffect.call': 'Call',
 
+    // Admin Panel
+    'admin.title': 'Admin Panel',
+    'admin.systemAdmin': 'System Admin',
+    'admin.users': 'Users',
+    'admin.searchPlaceholder': 'Search users...',
+    'admin.grantAdmin': 'Grant Admin',
+    'admin.revokeAdmin': 'Revoke Admin',
+    'admin.noUsers': 'No users found',
+    'admin.adminPanel': 'Admin Panel',
+
     // App Layout
     'layout.emptyTitle': 'ESA Internal Grid',
     'layout.emptyDescription': 'Select a channel from the left or start a new conversation for secure corporate messaging.',
@@ -358,6 +368,16 @@ const translations: Record<Lang, Record<string, string>> = {
     'voiceEffect.cyber': 'Siber',
     'voiceEffect.selectTitle': 'Ses Efekti Sec',
     'voiceEffect.call': 'Ara',
+
+    // Admin Panel
+    'admin.title': 'Admin Paneli',
+    'admin.systemAdmin': 'Sistem Admin',
+    'admin.users': 'Kullanicilar',
+    'admin.searchPlaceholder': 'Kullanici ara...',
+    'admin.grantAdmin': 'Admin Yap',
+    'admin.revokeAdmin': 'Adminligi Kaldir',
+    'admin.noUsers': 'Kullanici bulunamadi',
+    'admin.adminPanel': 'Admin Paneli',
 
     // App Layout
     'layout.emptyTitle': 'ESA Internal Grid',

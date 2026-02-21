@@ -235,6 +235,7 @@ export type Database = {
           display_name: string
           email: string
           id: string
+          is_system_admin: boolean
           updated_at: string
         }
         Insert: {
@@ -243,6 +244,7 @@ export type Database = {
           display_name: string
           email: string
           id: string
+          is_system_admin?: boolean
           updated_at?: string
         }
         Update: {
@@ -251,6 +253,7 @@ export type Database = {
           display_name?: string
           email?: string
           id?: string
+          is_system_admin?: boolean
           updated_at?: string
         }
         Relationships: []

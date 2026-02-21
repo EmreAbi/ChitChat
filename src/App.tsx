@@ -14,6 +14,7 @@ import NewChatPage from './pages/NewChatPage'
 import NewRoomPage from './pages/NewRoomPage'
 import RoomSettingsPage from './pages/RoomSettingsPage'
 import ProfilePage from './pages/ProfilePage'
+import AdminPage from './pages/AdminPage'
 
 export default function App() {
   return (
@@ -33,6 +34,7 @@ export default function App() {
                   <Route path="/new-room" element={<NewRoomPage />} />
                   <Route path="/room/:id/settings" element={<RoomSettingsPage />} />
                   <Route path="/profile" element={<ProfilePage />} />
+                  <Route path="/admin" element={<AdminPage />} />
                 </Route>
               </Route>
               <Route path="*" element={<Navigate to="/" replace />} />

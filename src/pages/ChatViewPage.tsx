@@ -27,7 +27,7 @@ function toDayKey(dateStr: string): string {
 export default function ChatViewPage() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
-  const { session } = useAuth()
+  const { session, profile } = useAuth()
   const { lang, t } = useT()
   const { isOnline } = usePresenceContext()
   const { startCall } = useCall()
@@ -76,7 +76,7 @@ export default function ChatViewPage() {
             ...conv,
             members: (conv.members as unknown as MemberInfo[]) || [],
           })
-        } else {
+        } else if (!profile?.is_system_admin) {
           // User is not a member (removed/left) - redirect to home
           navigate('/', { replace: true })
         }
