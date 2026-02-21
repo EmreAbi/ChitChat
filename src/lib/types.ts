@@ -267,6 +267,10 @@ export type Database = {
         Args: { p_conversation_id: string; p_user_id: string }
         Returns: undefined
       }
+      delete_room: {
+        Args: { p_conversation_id: string }
+        Returns: undefined
+      }
       find_direct_conversation: {
         Args: { p_other_user_id: string }
         Returns: string

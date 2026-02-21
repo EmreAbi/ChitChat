@@ -21,6 +21,8 @@ export default function RoomSettingsPage() {
   const [showAddMember, setShowAddMember] = useState(false)
   const [confirmRemove, setConfirmRemove] = useState<MemberInfo | null>(null)
   const [confirmLeave, setConfirmLeave] = useState(false)
+  const [confirmDelete, setConfirmDelete] = useState(false)
+  const [deleting, setDeleting] = useState(false)
   const [uploadingAvatar, setUploadingAvatar] = useState(false)
   const roomAvatarInputRef = useRef<HTMLInputElement>(null)
 
@@ -110,6 +112,19 @@ export default function RoomSettingsPage() {
       setUploadingAvatar(false)
       if (roomAvatarInputRef.current) roomAvatarInputRef.current.value = ''
     }
+  }
+
+  async function handleDeleteRoom() {
+    if (!id) return
+    setDeleting(true)
+    const { error } = await supabase.rpc('delete_room', { p_conversation_id: id })
+    if (error) {
+      console.error('Delete room failed:', error)
+      setDeleting(false)
+      setConfirmDelete(false)
+      return
+    }
+    navigate('/', { replace: true })
   }
 
   return (
@@ -241,10 +256,11 @@ export default function RoomSettingsPage() {
         </div>
       </div>
 
-      {/* Leave room button - only show if user is a member */}
-      {currentMember && (
-        <div className="p-4 border-t border-stroke-soft">
-          {isLastAdmin ? (
+      {/* Footer actions */}
+      <div className="p-4 border-t border-stroke-soft space-y-2">
+        {/* Leave room - only if member */}
+        {currentMember && (
+          isLastAdmin ? (
             <p className="text-xs text-text-muted text-center">{t('roomSettings.lastAdminWarning')}</p>
           ) : (
             <button
@@ -253,9 +269,19 @@ export default function RoomSettingsPage() {
             >
               {t('roomSettings.leaveRoom')}
             </button>
-          )}
-        </div>
-      )}
+          )
+        )}
+        {/* Delete room - only for admins */}
+        {isAdmin && (
+          <button
+            onClick={() => setConfirmDelete(true)}
+            disabled={deleting}
+            className="w-full py-3 rounded-xl text-sm font-semibold bg-red-600 text-white hover:bg-red-700 transition-colors disabled:opacity-50"
+          >
+            {deleting ? t('roomSettings.deleting') : t('roomSettings.deleteRoom')}
+          </button>
+        )}
+      </div>
 
       {/* Modals */}
       {showAddMember && (
@@ -291,6 +317,18 @@ export default function RoomSettingsPage() {
           destructive
           onConfirm={handleLeaveRoom}
           onCancel={() => setConfirmLeave(false)}
+        />
+      )}
+
+      {confirmDelete && (
+        <ConfirmDialog
+          title={t('confirm.deleteRoom')}
+          message={t('confirm.deleteRoomMessage')}
+          confirmLabel={t('confirm.confirm')}
+          cancelLabel={t('confirm.cancel')}
+          destructive
+          onConfirm={handleDeleteRoom}
+          onCancel={() => setConfirmDelete(false)}
         />
       )}
     </div>

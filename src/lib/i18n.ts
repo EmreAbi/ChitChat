@@ -116,6 +116,8 @@ const translations: Record<Lang, Record<string, string>> = {
     'roomSettings.lastAdminWarning': 'You are the last admin and cannot leave the room.',
     'roomSettings.saveName': 'Save',
     'roomSettings.saving': 'Saving...',
+    'roomSettings.deleteRoom': 'Delete Room',
+    'roomSettings.deleting': 'Deleting...',
 
     // Add Member
     'addMember.title': 'Add Member',
@@ -128,6 +130,8 @@ const translations: Record<Lang, Record<string, string>> = {
     'confirm.removeMemberMessage': 'Are you sure you want to remove {name} from this room?',
     'confirm.leaveRoom': 'Leave Room',
     'confirm.leaveRoomMessage': 'Are you sure you want to leave this room?',
+    'confirm.deleteRoom': 'Delete Room',
+    'confirm.deleteRoomMessage': 'Are you sure you want to delete this room? All messages and members will be permanently removed. This action cannot be undone.',
     'confirm.confirm': 'Confirm',
     'confirm.cancel': 'Cancel',
 
@@ -190,7 +194,7 @@ const translations: Record<Lang, Record<string, string>> = {
     'voiceEffect.shadow': 'Shadow',
     'voiceEffect.phantom': 'Phantom',
     'voiceEffect.cyber': 'Cyber',
-    'voiceEffect.selectTitle': 'Select Voice Effect',
+    'voiceEffect.selectTitle': 'Conversation Filter',
     'voiceEffect.call': 'Call',
 
     // Admin Panel
@@ -322,6 +326,8 @@ const translations: Record<Lang, Record<string, string>> = {
     'roomSettings.lastAdminWarning': 'Son admin oldugunuz icin odadan ayrilamazsiniz.',
     'roomSettings.saveName': 'Kaydet',
     'roomSettings.saving': 'Kaydediliyor...',
+    'roomSettings.deleteRoom': 'Odayi Sil',
+    'roomSettings.deleting': 'Siliniyor...',
 
     // Add Member
     'addMember.title': 'Uye Ekle',
@@ -334,6 +340,8 @@ const translations: Record<Lang, Record<string, string>> = {
     'confirm.removeMemberMessage': '{name} adli uyeyi bu odadan cikarmak istediginize emin misiniz?',
     'confirm.leaveRoom': 'Odadan Ayril',
     'confirm.leaveRoomMessage': 'Bu odadan ayrilmak istediginize emin misiniz?',
+    'confirm.deleteRoom': 'Odayi Sil',
+    'confirm.deleteRoomMessage': 'Bu odayi silmek istediginize emin misiniz? Tum mesajlar ve uyeler kalici olarak silinecektir. Bu islem geri alinamaz.',
     'confirm.confirm': 'Onayla',
     'confirm.cancel': 'Iptal',
 
@@ -396,7 +404,7 @@ const translations: Record<Lang, Record<string, string>> = {
     'voiceEffect.shadow': 'Golge',
     'voiceEffect.phantom': 'Hayalet',
     'voiceEffect.cyber': 'Siber',
-    'voiceEffect.selectTitle': 'Ses Efekti Sec',
+    'voiceEffect.selectTitle': 'Konusma Filtresi',
     'voiceEffect.call': 'Ara',
 
     // Admin Panel
