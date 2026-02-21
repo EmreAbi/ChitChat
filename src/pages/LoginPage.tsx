@@ -4,7 +4,7 @@ import { useAuth } from '../contexts/AuthContext'
 
 export default function LoginPage() {
   const { signIn, session, loading } = useAuth()
-  const [email, setEmail] = useState('')
+  const [nickname, setNickname] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [submitting, setSubmitting] = useState(false)
@@ -15,7 +15,7 @@ export default function LoginPage() {
     e.preventDefault()
     setError('')
     setSubmitting(true)
-    const { error } = await signIn(email, password)
+    const { error } = await signIn(nickname, password)
     if (error) setError(error)
     setSubmitting(false)
   }
@@ -38,14 +38,14 @@ export default function LoginPage() {
             <div className="bg-red-950/40 border border-red-800/50 text-red-300 text-sm p-3 rounded-xl">{error}</div>
           )}
           <label className="block">
-            <span className="mb-1.5 block text-xs font-medium text-text-muted mono-ui">EMAIL</span>
+            <span className="mb-1.5 block text-xs font-medium text-text-muted mono-ui">NICKNAME</span>
             <input
-              type="email"
-              placeholder="ornek@mail.com"
-              value={email}
-              onChange={e => setEmail(e.target.value)}
+              type="text"
+              placeholder="Nickname'ini gir"
+              value={nickname}
+              onChange={e => setNickname(e.target.value)}
               required
-              autoComplete="email"
+              autoComplete="username"
               className="w-full px-4 py-3 rounded-xl border border-stroke-soft bg-[#12251c] text-text-primary focus:border-whatsapp-teal focus:ring-2 focus:ring-whatsapp-teal/20 outline-none text-sm transition"
             />
           </label>

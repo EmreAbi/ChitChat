@@ -38,7 +38,7 @@ export default function ProfilePage() {
 
       <div className="flex flex-col items-center p-8 border-b border-stroke-soft/80">
         <Avatar name={profile.display_name} avatarUrl={profile.avatar_url} size="lg" />
-        <p className="text-sm text-text-muted mt-3 mono-ui">{profile.email}</p>
+        <p className="text-sm text-text-muted mt-3 mono-ui">@{profile.email}</p>
       </div>
 
       <div className="px-6 py-5 space-y-4">

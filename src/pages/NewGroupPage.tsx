@@ -32,8 +32,7 @@ export default function NewGroupPage() {
 
   const filtered = search
     ? users.filter(u =>
-        u.display_name.toLowerCase().includes(search.toLowerCase()) ||
-        u.email.toLowerCase().includes(search.toLowerCase())
+        u.display_name.toLowerCase().includes(search.toLowerCase())
       )
     : users
 
@@ -200,7 +199,6 @@ export default function NewGroupPage() {
               <Avatar name={user.display_name} avatarUrl={user.avatar_url} />
               <div className="flex-1 text-left">
                 <p className="font-semibold text-text-primary">{user.display_name}</p>
-                <p className="text-sm text-text-muted">{user.email}</p>
               </div>
               <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
                 selected.has(user.id) ? 'bg-whatsapp-green border-whatsapp-green' : 'border-stroke-soft'

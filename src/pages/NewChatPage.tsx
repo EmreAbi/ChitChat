@@ -29,8 +29,7 @@ export default function NewChatPage() {
 
   const filtered = search
     ? users.filter(u =>
-        u.display_name.toLowerCase().includes(search.toLowerCase()) ||
-        u.email.toLowerCase().includes(search.toLowerCase())
+        u.display_name.toLowerCase().includes(search.toLowerCase())
       )
     : users
 
@@ -109,7 +108,6 @@ export default function NewChatPage() {
               <Avatar name={user.display_name} avatarUrl={user.avatar_url} />
               <div className="text-left min-w-0">
                 <p className="font-semibold text-text-primary truncate">{user.display_name}</p>
-                <p className="text-sm text-text-muted truncate">{user.email}</p>
               </div>
             </button>
           ))

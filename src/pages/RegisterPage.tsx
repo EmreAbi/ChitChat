@@ -1,26 +1,64 @@
 import { useState, type FormEvent } from 'react'
 import { Link, Navigate } from 'react-router'
 import { useAuth } from '../contexts/AuthContext'
+import { supabase } from '../lib/supabase'
 
 export default function RegisterPage() {
   const { signUp, session, loading } = useAuth()
-  const [displayName, setDisplayName] = useState('')
-  const [email, setEmail] = useState('')
+  const [nickname, setNickname] = useState('')
   const [password, setPassword] = useState('')
+  const [systemPassword, setSystemPassword] = useState('')
   const [error, setError] = useState('')
   const [submitting, setSubmitting] = useState(false)
 
   if (!loading && session) return <Navigate to="/" replace />
 
+  function validateNickname(value: string): string | null {
+    if (value.length < 3 || value.length > 20) return 'Nickname 3-20 karakter olmali'
+    if (!/^[a-zA-Z0-9_]+$/.test(value)) return 'Nickname sadece harf, rakam ve _ icermeli'
+    return null
+  }
+
+  function validatePassword(value: string): string | null {
+    if (value.length < 6) return 'Sifre en az 6 karakter olmali'
+    if (!/[a-z]/.test(value)) return 'Sifre en az bir kucuk harf icermeli'
+    if (!/[A-Z]/.test(value)) return 'Sifre en az bir buyuk harf icermeli'
+    if (!/[^a-zA-Z0-9]/.test(value)) return 'Sifre en az bir ozel karakter icermeli'
+    return null
+  }
+
   async function handleSubmit(e: FormEvent) {
     e.preventDefault()
     setError('')
-    if (password.length < 6) {
-      setError('Password must be at least 6 characters')
+
+    const nicknameError = validateNickname(nickname)
+    if (nicknameError) { setError(nicknameError); return }
+
+    const passwordError = validatePassword(password)
+    if (passwordError) { setError(passwordError); return }
+
+    setSubmitting(true)
+
+    // Check system password
+    const { data: settings, error: settingsError } = await supabase
+      .from('app_settings')
+      .select('value')
+      .eq('key', 'registration_password')
+      .single()
+
+    if (settingsError || !settings) {
+      setError('Sistem hatasi, tekrar deneyin')
+      setSubmitting(false)
       return
     }
-    setSubmitting(true)
-    const { error } = await signUp(email, password, displayName)
+
+    if (settings.value !== systemPassword) {
+      setError('Yanlis sistem sifresi')
+      setSubmitting(false)
+      return
+    }
+
+    const { error } = await signUp(nickname, password)
     if (error) setError(error)
     setSubmitting(false)
   }
@@ -43,39 +81,40 @@ export default function RegisterPage() {
             <div className="bg-red-950/40 border border-red-800/50 text-red-300 text-sm p-3 rounded-xl">{error}</div>
           )}
           <label className="block">
-            <span className="mb-1.5 block text-xs font-medium text-text-muted mono-ui">DISPLAY NAME</span>
+            <span className="mb-1.5 block text-xs font-medium text-text-muted mono-ui">NICKNAME</span>
             <input
               type="text"
-              placeholder="Ornek: Emre"
-              value={displayName}
-              onChange={e => setDisplayName(e.target.value)}
+              placeholder="ornek: emre_42"
+              value={nickname}
+              onChange={e => setNickname(e.target.value)}
               required
-              autoComplete="name"
+              autoComplete="username"
               className="w-full px-4 py-3 rounded-xl border border-stroke-soft bg-[#12251c] text-text-primary focus:border-whatsapp-teal focus:ring-2 focus:ring-whatsapp-teal/20 outline-none text-sm transition"
             />
-          </label>
-          <label className="block">
-            <span className="mb-1.5 block text-xs font-medium text-text-muted mono-ui">EMAIL</span>
-            <input
-              type="email"
-              placeholder="ornek@mail.com"
-              value={email}
-              onChange={e => setEmail(e.target.value)}
-              required
-              autoComplete="email"
-              className="w-full px-4 py-3 rounded-xl border border-stroke-soft bg-[#12251c] text-text-primary focus:border-whatsapp-teal focus:ring-2 focus:ring-whatsapp-teal/20 outline-none text-sm transition"
-            />
+            <span className="text-xs text-text-muted mt-1 block">3-20 karakter, harf, rakam ve _ kullanilabilir</span>
           </label>
           <label className="block">
             <span className="mb-1.5 block text-xs font-medium text-text-muted mono-ui">PASSWORD</span>
             <input
               type="password"
-              placeholder="En az 6 karakter"
+              placeholder="En az 6 karakter, buyuk/kucuk harf + ozel karakter"
               value={password}
               onChange={e => setPassword(e.target.value)}
               required
               minLength={6}
               autoComplete="new-password"
+              className="w-full px-4 py-3 rounded-xl border border-stroke-soft bg-[#12251c] text-text-primary focus:border-whatsapp-teal focus:ring-2 focus:ring-whatsapp-teal/20 outline-none text-sm transition"
+            />
+          </label>
+          <label className="block">
+            <span className="mb-1.5 block text-xs font-medium text-text-muted mono-ui">SYSTEM PASSWORD</span>
+            <input
+              type="password"
+              placeholder="Kayit sifresi"
+              value={systemPassword}
+              onChange={e => setSystemPassword(e.target.value)}
+              required
+              autoComplete="off"
               className="w-full px-4 py-3 rounded-xl border border-stroke-soft bg-[#12251c] text-text-primary focus:border-whatsapp-teal focus:ring-2 focus:ring-whatsapp-teal/20 outline-none text-sm transition"
             />
           </label>
