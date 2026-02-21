@@ -33,7 +33,11 @@ export default function IncomingCallModal() {
         <h3 className="text-lg font-semibold text-text-primary mb-1">
           {callState.remoteUser.displayName}
         </h3>
-        <p className="text-sm text-text-muted mb-5">{t('call.incoming')}</p>
+        <p className="text-sm text-text-muted mb-5">
+          {callState.isGroup
+            ? t('call.groupIncoming', { name: callState.remoteUser.displayName })
+            : t('call.incoming')}
+        </p>
 
         {/* Voice effect selector */}
         <div className="mb-6">

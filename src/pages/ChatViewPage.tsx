@@ -153,14 +153,26 @@ export default function ChatViewPage() {
 
   function handleCallStart() {
     if (!id || !otherMembers[0]) return
-    const member = otherMembers[0]
     setStoredVoiceEffect(selectedEffect)
     setShowCallModal(false)
-    startCall(id, {
-      id: member.user_id,
-      displayName: member.display_name,
-      avatarUrl: member.avatar_url,
-    }, selectedEffect)
+
+    if (isGroup) {
+      // Group call: pass all other members
+      const groupMembers = otherMembers.map(m => ({
+        id: m.user_id,
+        displayName: m.display_name,
+        avatarUrl: m.avatar_url,
+      }))
+      startCall(id, null, selectedEffect, groupMembers)
+    } else {
+      // 1:1 call
+      const member = otherMembers[0]
+      startCall(id, {
+        id: member.user_id,
+        displayName: member.display_name,
+        avatarUrl: member.avatar_url,
+      }, selectedEffect)
+    }
   }
 
   if (!id) return null
@@ -191,7 +203,7 @@ export default function ChatViewPage() {
         avatarUrl={isGroup ? conversation?.avatar_url : otherMembers[0]?.avatar_url}
         subtitle={subtitle}
         online={!isGroup && otherMembers[0] ? isOnline(otherMembers[0].user_id) : undefined}
-        showCallButton={!isGroup}
+        showCallButton={true}
         onCall={handleCallClick}
       />
 

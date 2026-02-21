@@ -4,7 +4,7 @@ import translations, { type Lang } from '../lib/i18n'
 interface LanguageContextValue {
   lang: Lang
   setLang: (lang: Lang) => void
-  t: (key: string) => string
+  t: (key: string, params?: Record<string, string | number>) => string
 }
 
 const LanguageContext = createContext<LanguageContextValue | null>(null)
@@ -23,8 +23,14 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     localStorage.setItem('lang', newLang)
   }, [])
 
-  const t = useCallback((key: string): string => {
-    return translations[lang][key] ?? key
+  const t = useCallback((key: string, params?: Record<string, string | number>): string => {
+    let val = translations[lang][key] ?? key
+    if (params) {
+      for (const [k, v] of Object.entries(params)) {
+        val = val.replace(`{${k}}`, String(v))
+      }
+    }
+    return val
   }, [lang])
 
   return (

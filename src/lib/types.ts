@@ -352,6 +352,13 @@ export function isImageMimeType(mimeType: string): boolean {
 // Call types
 export type CallStatus = 'idle' | 'outgoing_ringing' | 'incoming_ringing' | 'connecting' | 'connected' | 'ended'
 
+export interface CallParticipant {
+  id: string
+  displayName: string
+  avatarUrl: string | null
+  status: 'ringing' | 'connecting' | 'connected' | 'left'
+}
+
 export interface CallState {
   status: CallStatus
   conversationId: string | null
@@ -360,4 +367,6 @@ export interface CallState {
   isMuted: boolean
   isSpeaker: boolean
   startedAt: number | null
+  isGroup: boolean
+  participants: Map<string, CallParticipant>
 }

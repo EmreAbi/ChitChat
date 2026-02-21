@@ -123,6 +123,11 @@ const translations: Record<Lang, Record<string, string>> = {
     'call.speakerOff': 'Turn off speaker',
     'call.speakerOn': 'Turn on speaker',
 
+    // Group Call
+    'call.groupIncoming': 'Group call from {name}...',
+    'call.participantCount': '{count} participants',
+    'call.joining': 'Joining...',
+
     // Voice Effects
     'profile.voiceEffect': 'VOICE EFFECT',
     'voiceEffect.disguise': 'Disguise',
@@ -257,6 +262,11 @@ const translations: Record<Lang, Record<string, string>> = {
     'call.endAria': 'Aramayi sonlandir',
     'call.speakerOff': 'Hoparloru kapat',
     'call.speakerOn': 'Hoparloru ac',
+
+    // Group Call
+    'call.groupIncoming': '{name} grup aramasi...',
+    'call.participantCount': '{count} katilimci',
+    'call.joining': 'Katiliyor...',
 
     // Voice Effects
     'profile.voiceEffect': 'SES EFEKTI',
