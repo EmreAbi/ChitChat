@@ -194,6 +194,9 @@ export function CallProvider({ children }: { children: ReactNode }) {
     // Add processed tracks to this peer
     if (processedStream.current) {
       processedStream.current.getTracks().forEach(track => pc.addTrack(track, processedStream.current!))
+      console.log('[Group WebRTC] Added', processedStream.current.getTracks().length, 'tracks for', userId)
+    } else {
+      console.warn('[Group WebRTC] No processedStream available for', userId)
     }
 
     // Remote audio element for this peer
@@ -221,6 +224,7 @@ export function CallProvider({ children }: { children: ReactNode }) {
 
     // Connection state
     pc.onconnectionstatechange = () => {
+      console.log('[Group WebRTC] Connection state for', userId, ':', pc.connectionState)
       if (pc.connectionState === 'connected') {
         stopAllTones()
         dispatch({ type: 'PARTICIPANT_CONNECTED', userId })
@@ -228,6 +232,14 @@ export function CallProvider({ children }: { children: ReactNode }) {
         dispatch({ type: 'PARTICIPANT_LEFT', userId })
         removePeer(userId)
       }
+    }
+
+    pc.oniceconnectionstatechange = () => {
+      console.log('[Group WebRTC] ICE state for', userId, ':', pc.iceConnectionState)
+    }
+
+    pc.onicegatheringstatechange = () => {
+      console.log('[Group WebRTC] ICE gathering for', userId, ':', pc.iceGatheringState)
     }
 
     peers.current.set(userId, { pc, audioCtx: audioContextRef.current!, audioEl })
@@ -509,8 +521,9 @@ export function CallProvider({ children }: { children: ReactNode }) {
         const joinedUserId = payload.userId as string
         if (joinedUserId === myUserId) return
         if (peers.current.has(joinedUserId)) return
-        // Existing participants create offers to the new peer
-        dispatch({ type: 'PARTICIPANT_CONNECTED', userId: joinedUserId })
+        // Create offer to the new peer — PARTICIPANT_CONNECTED will dispatch
+        // when the actual WebRTC connection succeeds (in createPeerForUser's onconnectionstatechange)
+        console.log('[Group] Peer joined, creating offer for:', joinedUserId)
         await createPeerForUser(joinedUserId, true)
       })
       .on('broadcast', { event: 'peer-left' }, ({ payload }) => {
