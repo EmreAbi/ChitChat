@@ -45,6 +45,8 @@ const translations: Record<Lang, Record<string, string>> = {
     'profile.saveChanges': 'Save Changes',
     'profile.signOut': 'Sign Out',
     'profile.language': 'LANGUAGE',
+    'profile.changeAvatar': 'Change Avatar',
+    'profile.uploadingAvatar': 'Uploading...',
 
     // Chat List
     'chatList.title': 'ESA Node',
@@ -101,6 +103,8 @@ const translations: Record<Lang, Record<string, string>> = {
 
     // Room Settings
     'roomSettings.title': 'Room Settings',
+    'roomSettings.changeAvatar': 'Change Avatar',
+    'roomSettings.uploadingAvatar': 'Uploading...',
     'roomSettings.roomName': 'ROOM NAME',
     'roomSettings.members': 'MEMBERS',
     'roomSettings.memberCount': '{count} members',
@@ -247,6 +251,8 @@ const translations: Record<Lang, Record<string, string>> = {
     'profile.saveChanges': 'Degisiklikleri Kaydet',
     'profile.signOut': 'Cikis Yap',
     'profile.language': 'DIL',
+    'profile.changeAvatar': 'Avatar Degistir',
+    'profile.uploadingAvatar': 'Yukleniyor...',
 
     // Chat List
     'chatList.title': 'ESA Node',
@@ -303,6 +309,8 @@ const translations: Record<Lang, Record<string, string>> = {
 
     // Room Settings
     'roomSettings.title': 'Oda Ayarlari',
+    'roomSettings.changeAvatar': 'Avatar Degistir',
+    'roomSettings.uploadingAvatar': 'Yukleniyor...',
     'roomSettings.roomName': 'ODA ADI',
     'roomSettings.members': 'UYELER',
     'roomSettings.memberCount': '{count} uye',

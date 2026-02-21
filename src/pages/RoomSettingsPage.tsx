@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useParams, useNavigate } from 'react-router'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../contexts/AuthContext'
@@ -21,6 +21,8 @@ export default function RoomSettingsPage() {
   const [showAddMember, setShowAddMember] = useState(false)
   const [confirmRemove, setConfirmRemove] = useState<MemberInfo | null>(null)
   const [confirmLeave, setConfirmLeave] = useState(false)
+  const [uploadingAvatar, setUploadingAvatar] = useState(false)
+  const roomAvatarInputRef = useRef<HTMLInputElement>(null)
 
   async function fetchConversation() {
     if (!id) return
@@ -90,6 +92,26 @@ export default function RoomSettingsPage() {
     navigate('/', { replace: true })
   }
 
+  async function handleRoomAvatarChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (!file || !id) return
+    setUploadingAvatar(true)
+    try {
+      const ext = file.name.split('.').pop() || 'jpg'
+      const filePath = `rooms/${id}/avatar.${ext}`
+      await supabase.storage.from('avatars').upload(filePath, file, { upsert: true })
+      const { data: urlData } = supabase.storage.from('avatars').getPublicUrl(filePath)
+      const avatarUrl = `${urlData.publicUrl}?t=${Date.now()}`
+      await supabase.from('conversations').update({ avatar_url: avatarUrl }).eq('id', id)
+      setConversation(prev => prev ? { ...prev, avatar_url: avatarUrl } : prev)
+    } catch (err) {
+      console.error('Room avatar upload failed:', err)
+    } finally {
+      setUploadingAvatar(false)
+      if (roomAvatarInputRef.current) roomAvatarInputRef.current.value = ''
+    }
+  }
+
   return (
     <div className="flex flex-col h-full w-full bg-surface-elevated">
       {/* Header */}
@@ -105,6 +127,42 @@ export default function RoomSettingsPage() {
       </header>
 
       <div className="flex-1 overflow-y-auto">
+        {/* Room avatar */}
+        <div className="flex flex-col items-center p-6 border-b border-stroke-soft/80">
+          {isAdmin ? (
+            <button
+              type="button"
+              onClick={() => roomAvatarInputRef.current?.click()}
+              disabled={uploadingAvatar}
+              className="relative group cursor-pointer disabled:opacity-50"
+            >
+              <Avatar name={conversation.name || ''} avatarUrl={conversation.avatar_url} size="lg" shape="square" />
+              <div className="absolute inset-0 flex items-center justify-center bg-black/50 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity">
+                {uploadingAvatar ? (
+                  <span className="text-[10px] text-white font-medium">{t('roomSettings.uploadingAvatar')}</span>
+                ) : (
+                  <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
+                )}
+              </div>
+            </button>
+          ) : (
+            <Avatar name={conversation.name || ''} avatarUrl={conversation.avatar_url} size="lg" shape="square" />
+          )}
+          <input
+            ref={roomAvatarInputRef}
+            type="file"
+            accept="image/*"
+            onChange={handleRoomAvatarChange}
+            className="hidden"
+          />
+          {isAdmin && (
+            <p className="text-[11px] text-text-muted mt-2 mono-ui">{t('roomSettings.changeAvatar')}</p>
+          )}
+        </div>
+
         {/* Room name */}
         <div className="p-4 border-b border-stroke-soft">
           <label className="text-[11px] font-semibold text-text-muted tracking-wider mono-ui mb-2 block">

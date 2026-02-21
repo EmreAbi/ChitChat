@@ -56,7 +56,7 @@ export default function ChatListItem({ conversation }: ChatListItemProps) {
     >
       <span className={`absolute inset-y-2 left-1 w-1 rounded-full bg-whatsapp-green transition-opacity ${isActive ? 'opacity-100' : 'opacity-0 group-hover:opacity-50'}`} />
       <div className="flex items-center gap-3 px-4 py-3">
-        <Avatar name={displayName} avatarUrl={avatarUrl} online={online} />
+        <Avatar name={displayName} avatarUrl={avatarUrl} online={online} shape={conversation.type === 'group' ? 'square' : 'circle'} />
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between">
             <span className="font-semibold text-text-primary truncate">{displayName}</span>

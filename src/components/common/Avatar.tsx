@@ -3,6 +3,7 @@ interface AvatarProps {
   avatarUrl?: string | null
   size?: 'sm' | 'md' | 'lg'
   online?: boolean
+  shape?: 'circle' | 'square'
 }
 
 const sizeClasses = {
@@ -17,7 +18,7 @@ const dotSizeClasses = {
   lg: 'w-4 h-4',
 }
 
-export default function Avatar({ name, avatarUrl, size = 'md', online }: AvatarProps) {
+export default function Avatar({ name, avatarUrl, size = 'md', online, shape = 'circle' }: AvatarProps) {
   const initials = name
     .split(' ')
     .map(w => w[0])
@@ -31,16 +32,18 @@ export default function Avatar({ name, avatarUrl, size = 'md', online }: AvatarP
     'bg-[#324a34]', 'bg-[#335147]', 'bg-[#253f44]',
   ]
 
+  const radiusClass = shape === 'square' ? 'rounded-xl' : 'rounded-full'
+
   return (
     <div className="relative shrink-0">
       {avatarUrl ? (
         <img
           src={avatarUrl}
           alt={name}
-          className={`${sizeClasses[size]} rounded-full object-cover ring-1 ring-stroke-soft`}
+          className={`${sizeClasses[size]} ${radiusClass} object-cover ring-1 ring-stroke-soft`}
         />
       ) : (
-        <div className={`${sizeClasses[size]} ${colors[colorIndex]} rounded-full ring-1 ring-stroke-soft flex items-center justify-center text-[#dbffe9] font-semibold`}>
+        <div className={`${sizeClasses[size]} ${colors[colorIndex]} ${radiusClass} ring-1 ring-stroke-soft flex items-center justify-center text-[#dbffe9] font-semibold`}>
           {initials}
         </div>
       )}

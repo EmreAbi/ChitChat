@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { useNavigate } from 'react-router'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../contexts/AuthContext'
@@ -8,12 +8,14 @@ import { VOICE_EFFECTS, getStoredVoiceEffect, setStoredVoiceEffect, type VoiceEf
 
 export default function ProfilePage() {
   const navigate = useNavigate()
-  const { profile, signOut } = useAuth()
+  const { profile, signOut, refreshProfile } = useAuth()
   const { lang, setLang, t } = useT()
   const [displayName, setDisplayName] = useState(profile?.display_name ?? '')
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
   const [voiceEffect, setVoiceEffect] = useState<VoiceEffect>(getStoredVoiceEffect)
+  const [uploadingAvatar, setUploadingAvatar] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   async function handleSave() {
     if (!profile || !displayName.trim()) return
@@ -25,6 +27,26 @@ export default function ProfilePage() {
     setSaving(false)
     setSaved(true)
     setTimeout(() => setSaved(false), 2000)
+  }
+
+  async function handleAvatarChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (!file || !profile) return
+    setUploadingAvatar(true)
+    try {
+      const ext = file.name.split('.').pop() || 'jpg'
+      const filePath = `users/${profile.id}/avatar.${ext}`
+      await supabase.storage.from('avatars').upload(filePath, file, { upsert: true })
+      const { data: urlData } = supabase.storage.from('avatars').getPublicUrl(filePath)
+      const avatarUrl = `${urlData.publicUrl}?t=${Date.now()}`
+      await supabase.from('profiles').update({ avatar_url: avatarUrl }).eq('id', profile.id)
+      await refreshProfile()
+    } catch (err) {
+      console.error('Avatar upload failed:', err)
+    } finally {
+      setUploadingAvatar(false)
+      if (fileInputRef.current) fileInputRef.current.value = ''
+    }
   }
 
   if (!profile) return null
@@ -41,8 +63,33 @@ export default function ProfilePage() {
       </header>
 
       <div className="flex flex-col items-center p-8 border-b border-stroke-soft/80">
-        <Avatar name={profile.display_name} avatarUrl={profile.avatar_url} size="lg" />
-        <p className="text-sm text-text-muted mt-3 mono-ui">@{profile.email}</p>
+        <button
+          type="button"
+          onClick={() => fileInputRef.current?.click()}
+          disabled={uploadingAvatar}
+          className="relative group cursor-pointer disabled:opacity-50"
+        >
+          <Avatar name={profile.display_name} avatarUrl={profile.avatar_url} size="lg" />
+          <div className="absolute inset-0 flex items-center justify-center bg-black/50 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
+            {uploadingAvatar ? (
+              <span className="text-[10px] text-white font-medium">{t('profile.uploadingAvatar')}</span>
+            ) : (
+              <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+            )}
+          </div>
+        </button>
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/*"
+          onChange={handleAvatarChange}
+          className="hidden"
+        />
+        <p className="text-[11px] text-text-muted mt-2 mono-ui">{t('profile.changeAvatar')}</p>
+        <p className="text-sm text-text-muted mt-1 mono-ui">@{profile.email}</p>
       </div>
 
       <div className="px-6 py-5 space-y-4">

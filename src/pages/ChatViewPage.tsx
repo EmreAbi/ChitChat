@@ -207,9 +207,10 @@ export default function ChatViewPage() {
         avatarUrl={isGroup ? conversation?.avatar_url : otherMembers[0]?.avatar_url}
         subtitle={subtitle}
         online={!isGroup && otherMembers[0] ? isOnline(otherMembers[0].user_id) : undefined}
+        isGroup={isGroup}
         showCallButton={true}
         onCall={handleCallClick}
-        onHeaderClick={isGroup ? () => navigate(`/room/${id}/settings`) : undefined}
+        onSettingsClick={isGroup ? () => navigate(`/room/${id}/settings`) : undefined}
       />
 
       <div
