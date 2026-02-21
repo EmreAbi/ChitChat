@@ -34,12 +34,15 @@ function createSoftClipCurve(samples: number = 256): Float32Array {
   return curve
 }
 
-let workletLoaded = false
+const workletLoadedContexts = new WeakSet<AudioContext>()
 
 async function ensureWorklet(audioContext: AudioContext) {
-  if (!workletLoaded) {
+  if (audioContext.state === 'suspended') {
+    await audioContext.resume()
+  }
+  if (!workletLoadedContexts.has(audioContext)) {
     await audioContext.audioWorklet.addModule('/pitch-shift-processor.js')
-    workletLoaded = true
+    workletLoadedContexts.add(audioContext)
   }
 }
 

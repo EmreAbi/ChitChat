@@ -135,3 +135,31 @@ textarea:focus-visible,
 .mono-ui {
   font-family: "JetBrains Mono", "IBM Plex Mono", "Menlo", monospace;
 }
+
+/* Rotating grid background for auth pages */
+@keyframes grid-rotate {
+  from { transform: perspective(600px) rotateX(55deg) rotateZ(0deg); }
+  to   { transform: perspective(600px) rotateX(55deg) rotateZ(360deg); }
+}
+
+@keyframes grid-pulse {
+  0%, 100% { opacity: 0.35; }
+  50%      { opacity: 0.55; }
+}
+
+.auth-grid {
+  position: absolute;
+  inset: -50%;
+  width: 200%;
+  height: 200%;
+  background-image:
+    linear-gradient(rgba(65, 243, 154, 0.12) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(65, 243, 154, 0.12) 1px, transparent 1px);
+  background-size: 48px 48px;
+  animation:
+    grid-rotate 60s linear infinite,
+    grid-pulse 8s ease-in-out infinite;
+  transform-origin: center center;
+  mask-image: radial-gradient(ellipse 50% 60% at 50% 50%, black 20%, transparent 70%);
+  -webkit-mask-image: radial-gradient(ellipse 50% 60% at 50% 50%, black 20%, transparent 70%);
+}

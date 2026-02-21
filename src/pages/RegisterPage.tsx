@@ -66,8 +66,9 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-[radial-gradient(circle_at_20%_10%,rgba(65,243,154,0.16),transparent_35%),radial-gradient(circle_at_80%_100%,rgba(31,208,122,0.15),transparent_30%),linear-gradient(160deg,#050b08_0%,#08110d_100%)]">
-      <div className="w-full max-w-sm bg-[#0d1d16]/96 rounded-3xl border border-stroke-soft shadow-[0_26px_70px_rgba(0,0,0,0.6)] p-8 backdrop-blur-sm">
+    <div className="min-h-screen flex items-center justify-center p-4 bg-[radial-gradient(circle_at_20%_10%,rgba(65,243,154,0.16),transparent_35%),radial-gradient(circle_at_80%_100%,rgba(31,208,122,0.15),transparent_30%),linear-gradient(160deg,#050b08_0%,#08110d_100%)] overflow-hidden relative">
+      <div className="auth-grid" aria-hidden="true" />
+      <div className="w-full max-w-sm bg-[#0d1d16]/96 rounded-3xl border border-stroke-soft shadow-[0_26px_70px_rgba(0,0,0,0.6)] p-8 backdrop-blur-sm relative z-10">
         <div className="text-center mb-7">
           <div className="w-16 h-16 bg-whatsapp-green rounded-2xl flex items-center justify-center mx-auto mb-3 shadow-md">
             <svg className="w-8 h-8 text-[#06110d]" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">

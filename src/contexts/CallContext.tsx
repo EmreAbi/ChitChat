@@ -151,6 +151,7 @@ export function CallProvider({ children }: { children: ReactNode }) {
     // Insert Web Audio API processing between mic and peer connection
     const actx = new AudioContext()
     audioContextRef.current = actx
+    if (actx.state === 'suspended') await actx.resume()
     const source = actx.createMediaStreamSource(stream)
     const effectOutput = await applyVoiceEffect(actx, source, effect)
     const destination = actx.createMediaStreamDestination()
