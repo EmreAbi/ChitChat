@@ -49,9 +49,43 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       .select('*')
       .eq('id', userId)
       .single()
+    if (data?.is_banned) {
+      await supabase.auth.signOut()
+      setSession(null)
+      setProfile(null)
+      setLoading(false)
+      return
+    }
     setProfile(data)
     setLoading(false)
   }
+
+  // Realtime listener: kick user out if banned
+  useEffect(() => {
+    if (!session?.user) return
+    const channel = supabase
+      .channel('own-profile-ban')
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'profiles',
+          filter: `id=eq.${session.user.id}`,
+        },
+        (payload) => {
+          const updated = payload.new as { is_banned?: boolean }
+          if (updated.is_banned) {
+            supabase.auth.signOut().then(() => {
+              setSession(null)
+              setProfile(null)
+            })
+          }
+        }
+      )
+      .subscribe()
+    return () => { supabase.removeChannel(channel) }
+  }, [session?.user?.id])
 
   async function refreshProfile() {
     if (session?.user) {

@@ -49,7 +49,7 @@ const translations: Record<Lang, Record<string, string>> = {
     'profile.uploadingAvatar': 'Uploading...',
 
     // Chat List
-    'chatList.title': 'ESA Node',
+    'chatList.title': 'ESA',
     'chatList.unread': 'unread',
     'chatList.allClear': 'all clear',
     'chatList.newGroup': 'New room',
@@ -206,6 +206,10 @@ const translations: Record<Lang, Record<string, string>> = {
     'admin.revokeAdmin': 'Revoke Admin',
     'admin.noUsers': 'No users found',
     'admin.adminPanel': 'Admin Panel',
+    'admin.ban': 'Ban',
+    'admin.unban': 'Unban',
+    'admin.banned': 'Banned',
+    'admin.bannedMessage': 'Your account has been suspended.',
 
     // App Layout
     'layout.emptyTitle': 'ESA Internal Grid',
@@ -259,7 +263,7 @@ const translations: Record<Lang, Record<string, string>> = {
     'profile.uploadingAvatar': 'Yukleniyor...',
 
     // Chat List
-    'chatList.title': 'ESA Node',
+    'chatList.title': 'ESA',
     'chatList.unread': 'okunmamis',
     'chatList.allClear': 'hepsi okundu',
     'chatList.newGroup': 'Yeni oda',
@@ -416,6 +420,10 @@ const translations: Record<Lang, Record<string, string>> = {
     'admin.revokeAdmin': 'Adminligi Kaldir',
     'admin.noUsers': 'Kullanici bulunamadi',
     'admin.adminPanel': 'Admin Paneli',
+    'admin.ban': 'Banla',
+    'admin.unban': 'Bani Kaldir',
+    'admin.banned': 'Banli',
+    'admin.bannedMessage': 'Hesabiniz askiya alindi.',
 
     // App Layout
     'layout.emptyTitle': 'ESA Internal Grid',

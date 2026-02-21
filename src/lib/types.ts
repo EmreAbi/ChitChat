@@ -235,6 +235,7 @@ export type Database = {
           display_name: string
           email: string
           id: string
+          is_banned: boolean
           is_system_admin: boolean
           updated_at: string
         }
@@ -244,6 +245,7 @@ export type Database = {
           display_name: string
           email: string
           id: string
+          is_banned?: boolean
           is_system_admin?: boolean
           updated_at?: string
         }
@@ -253,6 +255,7 @@ export type Database = {
           display_name?: string
           email?: string
           id?: string
+          is_banned?: boolean
           is_system_admin?: boolean
           updated_at?: string
         }

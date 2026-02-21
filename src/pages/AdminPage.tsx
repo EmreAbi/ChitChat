@@ -47,6 +47,20 @@ export default function AdminPage() {
     setTogglingId(null)
   }
 
+  async function toggleBan(userId: string, currentValue: boolean) {
+    setTogglingId(userId)
+    await supabase
+      .from('profiles')
+      .update({ is_banned: !currentValue })
+      .eq('id', userId)
+    setUsers(prev =>
+      prev.map(u =>
+        u.id === userId ? { ...u, is_banned: !currentValue } : u
+      )
+    )
+    setTogglingId(null)
+  }
+
   const filtered = useMemo(
     () =>
       users.filter(u => {
@@ -116,23 +130,41 @@ export default function AdminPage() {
                   </p>
                   <p className="text-[11px] text-text-muted truncate mono-ui">@{user.email}</p>
                 </div>
+                {user.is_banned && (
+                  <span className="text-[11px] font-medium px-2 py-0.5 rounded-full bg-red-500/15 text-red-400 border border-red-500/30 mono-ui shrink-0">
+                    {t('admin.banned')}
+                  </span>
+                )}
                 {user.is_system_admin && (
                   <span className="text-[11px] font-medium px-2 py-0.5 rounded-full bg-whatsapp-green/15 text-whatsapp-green border border-whatsapp-green/30 mono-ui shrink-0">
                     {t('admin.systemAdmin')}
                   </span>
                 )}
                 {user.id !== profile.id && (
-                  <button
-                    onClick={() => toggleAdmin(user.id, user.is_system_admin)}
-                    disabled={togglingId === user.id}
-                    className={`text-xs px-3 py-1.5 rounded-lg font-medium transition-colors shrink-0 disabled:opacity-50 ${
-                      user.is_system_admin
-                        ? 'text-red-400 hover:text-red-300 bg-red-500/10 hover:bg-red-500/20 border border-red-500/30'
-                        : 'text-whatsapp-green hover:text-[#72ffb4] bg-whatsapp-green/10 hover:bg-whatsapp-green/20 border border-whatsapp-green/30'
-                    }`}
-                  >
-                    {user.is_system_admin ? t('admin.revokeAdmin') : t('admin.grantAdmin')}
-                  </button>
+                  <div className="flex items-center gap-1.5 shrink-0">
+                    <button
+                      onClick={() => toggleBan(user.id, user.is_banned)}
+                      disabled={togglingId === user.id}
+                      className={`text-xs px-2.5 py-1.5 rounded-lg font-medium transition-colors disabled:opacity-50 ${
+                        user.is_banned
+                          ? 'text-whatsapp-green hover:text-[#72ffb4] bg-whatsapp-green/10 hover:bg-whatsapp-green/20 border border-whatsapp-green/30'
+                          : 'text-red-400 hover:text-red-300 bg-red-500/10 hover:bg-red-500/20 border border-red-500/30'
+                      }`}
+                    >
+                      {user.is_banned ? t('admin.unban') : t('admin.ban')}
+                    </button>
+                    <button
+                      onClick={() => toggleAdmin(user.id, user.is_system_admin)}
+                      disabled={togglingId === user.id}
+                      className={`text-xs px-2.5 py-1.5 rounded-lg font-medium transition-colors disabled:opacity-50 ${
+                        user.is_system_admin
+                          ? 'text-red-400 hover:text-red-300 bg-red-500/10 hover:bg-red-500/20 border border-red-500/30'
+                          : 'text-whatsapp-green hover:text-[#72ffb4] bg-whatsapp-green/10 hover:bg-whatsapp-green/20 border border-whatsapp-green/30'
+                      }`}
+                    >
+                      {user.is_system_admin ? t('admin.revokeAdmin') : t('admin.grantAdmin')}
+                    </button>
+                  </div>
                 )}
               </div>
             ))}

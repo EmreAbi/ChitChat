@@ -1,10 +1,11 @@
 import { useState, type FormEvent } from 'react'
 import { Link, Navigate } from 'react-router'
+import { supabase } from '../lib/supabase'
 import { useAuth } from '../contexts/AuthContext'
 import { useT } from '../contexts/LanguageContext'
 
 export default function LoginPage() {
-  const { signIn, session, loading } = useAuth()
+  const { signIn, signOut, session, loading } = useAuth()
   const { t } = useT()
   const [nickname, setNickname] = useState('')
   const [password, setPassword] = useState('')
@@ -18,7 +19,22 @@ export default function LoginPage() {
     setError('')
     setSubmitting(true)
     const { error } = await signIn(nickname, password)
-    if (error) setError(error)
+    if (error) {
+      setError(error)
+      setSubmitting(false)
+      return
+    }
+    // Check if user is banned
+    const email = `${nickname}@esa.io`
+    const { data: profileData } = await supabase
+      .from('profiles')
+      .select('is_banned')
+      .eq('email', email)
+      .single()
+    if (profileData?.is_banned) {
+      await signOut()
+      setError(t('admin.bannedMessage'))
+    }
     setSubmitting(false)
   }
 
