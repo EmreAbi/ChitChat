@@ -347,6 +347,7 @@ export function CallProvider({ children }: { children: ReactNode }) {
 
     // Connection state changes
     pc.onconnectionstatechange = () => {
+      console.log('[WebRTC] Connection state:', pc.connectionState)
       if (pc.connectionState === 'connected') {
         stopAllTones()
         dispatch({ type: 'CONNECTED' })
@@ -355,12 +356,35 @@ export function CallProvider({ children }: { children: ReactNode }) {
       }
     }
 
+    pc.oniceconnectionstatechange = () => {
+      console.log('[WebRTC] ICE connection state:', pc.iceConnectionState)
+    }
+
+    pc.onicegatheringstatechange = () => {
+      console.log('[WebRTC] ICE gathering state:', pc.iceGatheringState)
+    }
+
     return pc
   }, [])
 
   // --- Join session channel for WebRTC signaling (1:1 — unchanged) ---
 
-  const joinSessionChannel1to1 = useCallback((callLogId: string, _isCaller: boolean) => {
+  const joinSessionChannel1to1 = useCallback((callLogId: string) => {
+    const pendingCandidates: RTCIceCandidate[] = []
+
+    const flushPendingCandidates = async () => {
+      if (!peerConnection.current || pendingCandidates.length === 0) return
+      console.log('[ICE] Flushing', pendingCandidates.length, 'buffered candidates')
+      for (const candidate of pendingCandidates) {
+        try {
+          await peerConnection.current.addIceCandidate(candidate)
+        } catch (e) {
+          console.warn('[ICE] Failed to add buffered candidate:', e)
+        }
+      }
+      pendingCandidates.length = 0
+    }
+
     const channel = supabase.channel(`call:session:${callLogId}`, {
       config: { broadcast: { self: false } },
     })
@@ -368,9 +392,9 @@ export function CallProvider({ children }: { children: ReactNode }) {
     channel
       .on('broadcast', { event: 'offer' }, async ({ payload }) => {
         if (!peerConnection.current) return
-        // 1:1: no targetId check needed
         if (payload.targetId) return // skip group messages
         await peerConnection.current.setRemoteDescription(new RTCSessionDescription(payload.sdp))
+        await flushPendingCandidates()
         const answer = await peerConnection.current.createAnswer()
         await peerConnection.current.setLocalDescription(answer)
         channel.send({
@@ -383,14 +407,20 @@ export function CallProvider({ children }: { children: ReactNode }) {
         if (!peerConnection.current) return
         if (payload.targetId) return // skip group messages
         await peerConnection.current.setRemoteDescription(new RTCSessionDescription(payload.sdp))
+        await flushPendingCandidates()
       })
       .on('broadcast', { event: 'ice-candidate' }, async ({ payload }) => {
         if (!peerConnection.current) return
         if (payload.targetId) return // skip group messages
+        const candidate = new RTCIceCandidate(payload.candidate)
+        if (!peerConnection.current.remoteDescription) {
+          pendingCandidates.push(candidate)
+          return
+        }
         try {
-          await peerConnection.current.addIceCandidate(new RTCIceCandidate(payload.candidate))
-        } catch {
-          // Candidate may arrive before remote description
+          await peerConnection.current.addIceCandidate(candidate)
+        } catch (e) {
+          console.warn('[ICE] Failed to add candidate:', e)
         }
       })
       .on('broadcast', { event: 'call-end' }, () => {
@@ -408,6 +438,23 @@ export function CallProvider({ children }: { children: ReactNode }) {
     const myUserId = session?.user?.id
     if (!myUserId) return
 
+    const pendingCandidatesMap = new Map<string, RTCIceCandidate[]>()
+
+    const flushPendingCandidates = async (senderId: string) => {
+      const entry = peers.current.get(senderId)
+      const pending = pendingCandidatesMap.get(senderId)
+      if (!entry || !pending || pending.length === 0) return
+      console.log('[ICE] Flushing', pending.length, 'buffered group candidates for', senderId)
+      for (const candidate of pending) {
+        try {
+          await entry.pc.addIceCandidate(candidate)
+        } catch (e) {
+          console.warn('[ICE] Failed to add buffered group candidate:', e)
+        }
+      }
+      pendingCandidatesMap.delete(senderId)
+    }
+
     const channel = supabase.channel(`call:session:${callLogId}`, {
       config: { broadcast: { self: false } },
     })
@@ -423,6 +470,7 @@ export function CallProvider({ children }: { children: ReactNode }) {
         const entry = peers.current.get(senderId)
         if (!entry) return
         await entry.pc.setRemoteDescription(new RTCSessionDescription(payload.sdp))
+        await flushPendingCandidates(senderId)
         const answer = await entry.pc.createAnswer()
         await entry.pc.setLocalDescription(answer)
         channel.send({
@@ -437,16 +485,24 @@ export function CallProvider({ children }: { children: ReactNode }) {
         const entry = peers.current.get(senderId)
         if (!entry) return
         await entry.pc.setRemoteDescription(new RTCSessionDescription(payload.sdp))
+        await flushPendingCandidates(senderId)
       })
       .on('broadcast', { event: 'ice-candidate' }, async ({ payload }) => {
         if (payload.targetId !== myUserId) return
         const senderId = payload.senderId as string
         const entry = peers.current.get(senderId)
         if (!entry) return
+        const candidate = new RTCIceCandidate(payload.candidate)
+        if (!entry.pc.remoteDescription) {
+          const pending = pendingCandidatesMap.get(senderId) || []
+          pending.push(candidate)
+          pendingCandidatesMap.set(senderId, pending)
+          return
+        }
         try {
-          await entry.pc.addIceCandidate(new RTCIceCandidate(payload.candidate))
-        } catch {
-          // Candidate may arrive before remote description
+          await entry.pc.addIceCandidate(candidate)
+        } catch (e) {
+          console.warn('[ICE] Failed to add group candidate:', e)
         }
       })
       .on('broadcast', { event: 'peer-joined' }, async ({ payload }) => {
@@ -737,7 +793,7 @@ export function CallProvider({ children }: { children: ReactNode }) {
 
           // Create peer connection and session channel
           const pc = await createPeerConnection(callLog.id, voiceEffectRef.current)
-          joinSessionChannel1to1(callLog.id, true)
+          joinSessionChannel1to1(callLog.id)
 
           // Caller creates offer
           const offer = await pc.createOffer()
@@ -840,7 +896,7 @@ export function CallProvider({ children }: { children: ReactNode }) {
           }
         })
 
-        joinSessionChannel1to1(state.callLogId, false)
+        joinSessionChannel1to1(state.callLogId)
       }
     } catch (err) {
       console.error('[Call] Failed to accept call (mic permission denied?):', err)
