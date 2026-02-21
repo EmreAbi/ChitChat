@@ -2,6 +2,7 @@ import { useLocation, useNavigate } from 'react-router'
 import { useAuth } from '../../contexts/AuthContext'
 import { usePresenceContext } from '../../contexts/PresenceContext'
 import Avatar from '../common/Avatar'
+import { parseFileContent } from '../../lib/types'
 import type { ConversationWithDetails } from '../../lib/types'
 
 interface ChatListItemProps {
@@ -61,7 +62,14 @@ export default function ChatListItem({ conversation }: ChatListItemProps) {
           </div>
           <div className="flex items-center justify-between mt-0.5">
             <p className="text-sm text-gray-500 truncate">
-              {conversation.last_message_content || 'Henuz mesaj yok'}
+              {conversation.last_message_type === 'image'
+                ? '\uD83D\uDCF7 Fotograf'
+                : conversation.last_message_type === 'file'
+                  ? (() => {
+                      const fc = parseFileContent(conversation.last_message_content || '')
+                      return `\uD83D\uDCCE ${fc?.name || 'Dosya'}`
+                    })()
+                  : conversation.last_message_content || 'Henuz mesaj yok'}
             </p>
             {conversation.unread_count > 0 && (
               <span className="ml-2 shrink-0 bg-whatsapp-green text-white text-xs font-bold rounded-full min-w-5 h-5 px-1.5 flex items-center justify-center">

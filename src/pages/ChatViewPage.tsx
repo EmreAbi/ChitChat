@@ -6,6 +6,7 @@ import { usePresenceContext } from '../contexts/PresenceContext'
 import { useCall } from '../contexts/CallContext'
 import { useMessages } from '../hooks/useMessages'
 import { useTypingIndicator } from '../hooks/useTypingIndicator'
+import { useFileUpload } from '../hooks/useFileUpload'
 import ChatHeader from '../components/chat/ChatHeader'
 import MessageBubble from '../components/chat/MessageBubble'
 import MessageInput from '../components/chat/MessageInput'
@@ -48,6 +49,7 @@ export default function ChatViewPage() {
   const { startCall } = useCall()
   const { messages, loading, sendMessage } = useMessages(id)
   const { typingUsers, sendTyping, sendStopTyping } = useTypingIndicator(id)
+  const { uploading, uploadFile } = useFileUpload(id)
   const [conversation, setConversation] = useState<ConversationWithDetails | null>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
@@ -235,6 +237,8 @@ export default function ChatViewPage() {
         onSend={sendMessage}
         onTyping={sendTyping}
         onStopTyping={sendStopTyping}
+        onFileSelect={uploadFile}
+        uploading={uploading}
       />
     </div>
   )

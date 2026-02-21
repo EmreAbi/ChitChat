@@ -1,5 +1,6 @@
 import type { MessageWithSender } from '../../hooks/useMessages'
 import ReadReceipt from './ReadReceipt'
+import { parseFileContent, formatFileSize, isImageMimeType } from '../../lib/types'
 
 interface MessageBubbleProps {
   message: MessageWithSender
@@ -22,6 +23,41 @@ function formatTime(dateStr: string): string {
   return new Date(dateStr).toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' })
 }
 
+function ImageContent({ url, name }: { url: string; name: string }) {
+  return (
+    <a href={url} target="_blank" rel="noopener noreferrer" className="block">
+      <img
+        src={url}
+        alt={name}
+        className="rounded-lg max-w-full max-h-64 object-cover"
+        loading="lazy"
+      />
+    </a>
+  )
+}
+
+function FileContent({ url, name, size, mimeType }: { url: string; name: string; size: number; mimeType: string }) {
+  const ext = name.split('.').pop()?.toUpperCase() || ''
+  return (
+    <a
+      href={url}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="flex items-center gap-3 p-2 rounded-lg bg-black/5 hover:bg-black/10 transition-colors"
+    >
+      <div className="shrink-0 w-10 h-10 rounded-lg bg-whatsapp-teal/15 flex items-center justify-center">
+        <svg className="w-5 h-5 text-whatsapp-teal" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="1.5">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
+        </svg>
+      </div>
+      <div className="min-w-0 flex-1">
+        <p className="text-sm font-medium text-gray-800 truncate">{name}</p>
+        <p className="text-xs text-gray-500">{ext} &middot; {formatFileSize(size)}</p>
+      </div>
+    </a>
+  )
+}
+
 export default function MessageBubble({ message, isOwn, showSender, readStatus }: MessageBubbleProps) {
   if (message.type === 'system') {
     return (
@@ -32,6 +68,9 @@ export default function MessageBubble({ message, isOwn, showSender, readStatus }
       </div>
     )
   }
+
+  const isFileMessage = message.type === 'image' || message.type === 'file'
+  const fileContent = isFileMessage ? parseFileContent(message.content) : null
 
   return (
     <div className={`flex ${isOwn ? 'justify-end' : 'justify-start'} mb-1 px-3`}>
@@ -47,9 +86,15 @@ export default function MessageBubble({ message, isOwn, showSender, readStatus }
             {message.sender.display_name}
           </p>
         )}
-        <p className="text-sm leading-relaxed text-gray-800 whitespace-pre-wrap break-words">
-          {message.content}
-        </p>
+        {fileContent && isImageMimeType(fileContent.mimeType) ? (
+          <ImageContent url={fileContent.url} name={fileContent.name} />
+        ) : fileContent ? (
+          <FileContent url={fileContent.url} name={fileContent.name} size={fileContent.size} mimeType={fileContent.mimeType} />
+        ) : (
+          <p className="text-sm leading-relaxed text-gray-800 whitespace-pre-wrap break-words">
+            {message.content}
+          </p>
+        )}
         <div className="mt-1.5 flex items-center justify-end gap-1">
           <span className="text-[11px] text-gray-500">{formatTime(message.created_at)}</span>
           {isOwn && readStatus && <ReadReceipt status={readStatus} />}

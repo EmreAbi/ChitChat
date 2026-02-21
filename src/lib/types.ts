@@ -270,6 +270,7 @@ export type Database = {
           last_message_at: string
           last_message_content: string
           last_message_sender_id: string
+          last_message_type: string
           members: Json
           name: string
           type: string
@@ -308,6 +309,7 @@ export interface ConversationWithDetails {
   last_message_content: string | null
   last_message_at: string | null
   last_message_sender_id: string | null
+  last_message_type: string | null
   unread_count: number
   members: MemberInfo[]
 }
@@ -317,6 +319,34 @@ export interface MemberInfo {
   display_name: string
   avatar_url: string | null
   email: string
+}
+
+// File message types
+export interface FileMessageContent {
+  url: string
+  name: string
+  size: number
+  mimeType: string
+}
+
+export function parseFileContent(content: string): FileMessageContent | null {
+  try {
+    const parsed = JSON.parse(content)
+    if (parsed && parsed.url && parsed.name) return parsed as FileMessageContent
+    return null
+  } catch {
+    return null
+  }
+}
+
+export function formatFileSize(bytes: number): string {
+  if (bytes < 1024) return bytes + ' B'
+  if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB'
+  return (bytes / (1024 * 1024)).toFixed(1) + ' MB'
+}
+
+export function isImageMimeType(mimeType: string): boolean {
+  return mimeType.startsWith('image/')
 }
 
 // Call types
