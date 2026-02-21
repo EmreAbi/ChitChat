@@ -15,7 +15,7 @@ const translations: Record<Lang, Record<string, string>> = {
     'login.signUp': 'Sign Up',
 
     // Register
-    'register.title': 'Provision User',
+    'register.title': 'ESA Provision User',
     'register.subtitle': 'Enterprise access onboarding',
     'register.nickname': 'NICKNAME',
     'register.nicknamePlaceholder': 'e.g.: shadow_fox',
@@ -59,8 +59,9 @@ const translations: Record<Lang, Record<string, string>> = {
     'chatList.signOut': 'Sign Out',
     'chatList.searchPlaceholder': 'Search secure channels',
     'chatList.filterAll': 'All',
+    'chatList.filterRooms': 'Rooms',
+    'chatList.filterContacts': 'Contacts',
     'chatList.filterUnread': 'Unread',
-    'chatList.filterGroups': 'Rooms',
     'chatList.emptyTitle': 'No chats yet',
     'chatList.emptyDescription': 'Start a new chat using the button below.',
     'chatList.newChatAria': 'Start new chat',
@@ -232,7 +233,7 @@ const translations: Record<Lang, Record<string, string>> = {
     'login.signUp': 'Kayit Ol',
 
     // Register
-    'register.title': 'Provision User',
+    'register.title': 'ESA Provision User',
     'register.subtitle': 'Enterprise access onboarding',
     'register.nickname': 'NICKNAME',
     'register.nicknamePlaceholder': 'ornek: shadow_fox',
@@ -276,8 +277,9 @@ const translations: Record<Lang, Record<string, string>> = {
     'chatList.signOut': 'Cikis Yap',
     'chatList.searchPlaceholder': 'Guvenli kanallarda ara',
     'chatList.filterAll': 'Tumu',
+    'chatList.filterRooms': 'Odalar',
+    'chatList.filterContacts': 'Kisiler',
     'chatList.filterUnread': 'Okunmamis',
-    'chatList.filterGroups': 'Odalar',
     'chatList.emptyTitle': 'Henuz sohbet yok',
     'chatList.emptyDescription': 'Asagidaki butondan yeni bir sohbet baslatabilirsin.',
     'chatList.newChatAria': 'Yeni sohbet baslat',

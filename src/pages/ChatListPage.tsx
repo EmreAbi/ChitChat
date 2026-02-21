@@ -14,7 +14,7 @@ export default function ChatListPage() {
   const { t } = useT()
   const { conversations, loading } = useConversations()
   const [search, setSearch] = useState('')
-  const [filterMode, setFilterMode] = useState<'all' | 'unread' | 'groups'>('all')
+  const [filterMode, setFilterMode] = useState<'all' | 'rooms' | 'contacts' | 'unread'>('all')
   const [showMenu, setShowMenu] = useState(false)
 
   useEffect(() => {
@@ -31,8 +31,9 @@ export default function ChatListPage() {
   const filtered = useMemo(
     () => conversations
       .filter(c => {
+        if (filterMode === 'rooms') return c.type === 'group'
+        if (filterMode === 'contacts') return c.type === 'direct'
         if (filterMode === 'unread') return c.unread_count > 0
-        if (filterMode === 'groups') return c.type === 'group'
         return true
       })
       .filter(c => {
@@ -150,12 +151,13 @@ export default function ChatListPage() {
         <div className="mt-2 flex items-center gap-2">
           {[
             { key: 'all', label: t('chatList.filterAll') },
+            { key: 'rooms', label: t('chatList.filterRooms') },
+            { key: 'contacts', label: t('chatList.filterContacts') },
             { key: 'unread', label: t('chatList.filterUnread') },
-            { key: 'groups', label: t('chatList.filterGroups') },
           ].map(tab => (
             <button
               key={tab.key}
-              onClick={() => setFilterMode(tab.key as 'all' | 'unread' | 'groups')}
+              onClick={() => setFilterMode(tab.key as 'all' | 'rooms' | 'contacts' | 'unread')}
               className={`px-3 py-1.5 rounded-full text-xs mono-ui transition ${
                 filterMode === tab.key
                   ? 'bg-whatsapp-green text-[#06110d] font-semibold'
