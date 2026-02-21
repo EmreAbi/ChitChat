@@ -359,6 +359,8 @@ export interface CallParticipant {
   status: 'ringing' | 'connecting' | 'connected' | 'left'
 }
 
+export type CallEndReason = 'rejected' | 'busy' | 'no_answer' | 'failed' | null
+
 export interface CallState {
   status: CallStatus
   conversationId: string | null
@@ -369,4 +371,5 @@ export interface CallState {
   startedAt: number | null
   isGroup: boolean
   participants: Map<string, CallParticipant>
+  endReason: CallEndReason
 }

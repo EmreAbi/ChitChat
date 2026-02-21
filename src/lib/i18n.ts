@@ -128,6 +128,13 @@ const translations: Record<Lang, Record<string, string>> = {
     'call.participantCount': '{count} participants',
     'call.joining': 'Joining...',
 
+    // Call End Reasons
+    'call.ended': 'Call ended',
+    'call.rejected': 'Call declined',
+    'call.busy': 'User is busy',
+    'call.noAnswer': 'No answer',
+    'call.failed': 'Call failed',
+
     // Voice Effects
     'profile.voiceEffect': 'VOICE EFFECT',
     'voiceEffect.disguise': 'Disguise',
@@ -267,6 +274,13 @@ const translations: Record<Lang, Record<string, string>> = {
     'call.groupIncoming': '{name} grup aramasi...',
     'call.participantCount': '{count} katilimci',
     'call.joining': 'Katiliyor...',
+
+    // Call End Reasons
+    'call.ended': 'Arama sonlandi',
+    'call.rejected': 'Arama reddedildi',
+    'call.busy': 'Kullanici mesgul',
+    'call.noAnswer': 'Cevap yok',
+    'call.failed': 'Arama basarisiz',
 
     // Voice Effects
     'profile.voiceEffect': 'SES EFEKTI',

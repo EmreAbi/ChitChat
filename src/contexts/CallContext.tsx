@@ -12,7 +12,7 @@ import { useAuth } from './AuthContext'
 import { getTurnCredentials } from '../lib/turnCredentials'
 import { playRingtone, playRingback, stopAllTones } from '../lib/ringtoneSound'
 import { applyVoiceEffect, getStoredVoiceEffect, type VoiceEffect } from '../lib/voiceEffects'
-import type { CallState, CallParticipant } from '../lib/types'
+import type { CallState, CallParticipant, CallEndReason } from '../lib/types'
 
 // --- Actions ---
 
@@ -23,7 +23,7 @@ type CallAction =
   | { type: 'INCOMING_GROUP_CALL'; conversationId: string; callLogId: string; remoteUser: CallState['remoteUser']; participants: Map<string, CallParticipant> }
   | { type: 'CALL_ACCEPTED' }
   | { type: 'CONNECTED' }
-  | { type: 'CALL_ENDED' }
+  | { type: 'CALL_ENDED'; reason?: CallEndReason }
   | { type: 'RESET' }
   | { type: 'TOGGLE_MUTE' }
   | { type: 'TOGGLE_SPEAKER' }
@@ -40,6 +40,7 @@ const initialState: CallState = {
   startedAt: null,
   isGroup: false,
   participants: new Map(),
+  endReason: null,
 }
 
 function callReducer(state: CallState, action: CallAction): CallState {
@@ -84,7 +85,7 @@ function callReducer(state: CallState, action: CallAction): CallState {
     case 'CONNECTED':
       return { ...state, status: 'connected', startedAt: state.startedAt ?? Date.now() }
     case 'CALL_ENDED':
-      return { ...state, status: 'ended' }
+      return { ...state, status: 'ended', endReason: action.reason ?? null }
     case 'RESET':
       return initialState
     case 'TOGGLE_MUTE':
@@ -681,8 +682,8 @@ export function CallProvider({ children }: { children: ReactNode }) {
           // No one joined, end call
           supabase.from('call_logs').update({ status: 'no_answer', ended_at: new Date().toISOString() }).eq('id', callLog.id).then()
           cleanup()
-          dispatch({ type: 'CALL_ENDED' })
-          setTimeout(() => dispatch({ type: 'RESET' }), 2000)
+          dispatch({ type: 'CALL_ENDED', reason: 'no_answer' })
+          setTimeout(() => dispatch({ type: 'RESET' }), 3000)
         }
       }, RING_TIMEOUT_MS)
     } else {
@@ -758,8 +759,8 @@ export function CallProvider({ children }: { children: ReactNode }) {
           if (payload.callLogId !== callLog.id) return
           supabase.from('call_logs').update({ status: 'rejected', ended_at: new Date().toISOString() }).eq('id', callLog.id).then()
           cleanup()
-          dispatch({ type: 'CALL_ENDED' })
-          setTimeout(() => dispatch({ type: 'RESET' }), 2000)
+          dispatch({ type: 'CALL_ENDED', reason: 'rejected' })
+          setTimeout(() => dispatch({ type: 'RESET' }), 3000)
           supabase.removeChannel(responseChannel)
           supabase.removeChannel(calleeChannel)
         })
@@ -767,8 +768,8 @@ export function CallProvider({ children }: { children: ReactNode }) {
           if (payload.callLogId !== callLog.id) return
           supabase.from('call_logs').update({ status: 'missed', ended_at: new Date().toISOString() }).eq('id', callLog.id).then()
           cleanup()
-          dispatch({ type: 'CALL_ENDED' })
-          setTimeout(() => dispatch({ type: 'RESET' }), 2000)
+          dispatch({ type: 'CALL_ENDED', reason: 'busy' })
+          setTimeout(() => dispatch({ type: 'RESET' }), 3000)
           supabase.removeChannel(responseChannel)
           supabase.removeChannel(calleeChannel)
         })
@@ -779,8 +780,8 @@ export function CallProvider({ children }: { children: ReactNode }) {
         if (callStateRef.current.status === 'outgoing_ringing') {
           supabase.from('call_logs').update({ status: 'no_answer', ended_at: new Date().toISOString() }).eq('id', callLog.id).then()
           cleanup()
-          dispatch({ type: 'CALL_ENDED' })
-          setTimeout(() => dispatch({ type: 'RESET' }), 2000)
+          dispatch({ type: 'CALL_ENDED', reason: 'no_answer' })
+          setTimeout(() => dispatch({ type: 'RESET' }), 3000)
           supabase.removeChannel(responseChannel)
           supabase.removeChannel(calleeChannel)
         }
@@ -805,41 +806,65 @@ export function CallProvider({ children }: { children: ReactNode }) {
 
     dispatch({ type: 'CALL_ACCEPTED' })
 
-    if (state.isGroup) {
-      // --- GROUP CALL ACCEPT ---
-      await initLocalMedia(selectedEffect)
-      joinSessionChannelGroup(state.callLogId)
+    try {
+      if (state.isGroup) {
+        // --- GROUP CALL ACCEPT ---
+        await initLocalMedia(selectedEffect)
+        joinSessionChannelGroup(state.callLogId)
 
-      // Broadcast peer-joined so existing participants connect to us
-      setTimeout(() => {
-        sessionChannel.current?.send({
-          type: 'broadcast',
-          event: 'peer-joined',
-          payload: { userId: session?.user?.id },
+        // Broadcast peer-joined so existing participants connect to us
+        setTimeout(() => {
+          sessionChannel.current?.send({
+            type: 'broadcast',
+            event: 'peer-joined',
+            payload: { userId: session?.user?.id },
+          })
+        }, 500)
+      } else {
+        // --- 1:1 CALL ACCEPT ---
+        // Create peer connection first (may fail if mic permission denied)
+        await createPeerConnection(state.callLogId, selectedEffect)
+
+        // Only send accept AFTER peer connection is ready
+        const callerResponseChannel = supabase.channel(`call:user:${state.remoteUser.id}:response`, {
+          config: { broadcast: { self: false } },
         })
-      }, 500)
-    } else {
-      // --- 1:1 CALL ACCEPT (unchanged) ---
-      // Send accept to caller's response channel
+        callerResponseChannel.subscribe((status) => {
+          if (status === 'SUBSCRIBED') {
+            callerResponseChannel.send({
+              type: 'broadcast',
+              event: 'call-accept',
+              payload: { callLogId: state.callLogId },
+            })
+            setTimeout(() => supabase.removeChannel(callerResponseChannel), 1000)
+          }
+        })
+
+        joinSessionChannel1to1(state.callLogId, false)
+      }
+    } catch (err) {
+      console.error('[Call] Failed to accept call (mic permission denied?):', err)
+      // Notify the caller that the call failed
       const callerResponseChannel = supabase.channel(`call:user:${state.remoteUser.id}:response`, {
         config: { broadcast: { self: false } },
       })
-      callerResponseChannel.subscribe((status) => {
-        if (status === 'SUBSCRIBED') {
+      callerResponseChannel.subscribe((st) => {
+        if (st === 'SUBSCRIBED') {
           callerResponseChannel.send({
             type: 'broadcast',
-            event: 'call-accept',
+            event: 'call-reject',
             payload: { callLogId: state.callLogId },
           })
           setTimeout(() => supabase.removeChannel(callerResponseChannel), 1000)
         }
       })
 
-      // Create peer connection and join session channel
-      await createPeerConnection(state.callLogId, selectedEffect)
-      joinSessionChannel1to1(state.callLogId, false)
+      supabase.from('call_logs').update({ status: 'rejected', ended_at: new Date().toISOString() }).eq('id', state.callLogId).then()
+      cleanup()
+      dispatch({ type: 'CALL_ENDED', reason: 'failed' })
+      setTimeout(() => dispatch({ type: 'RESET' }), 3000)
     }
-  }, [session, createPeerConnection, joinSessionChannel1to1, joinSessionChannelGroup, initLocalMedia])
+  }, [session, createPeerConnection, joinSessionChannel1to1, joinSessionChannelGroup, initLocalMedia, cleanup])
 
   // --- Reject call helper ---
 
