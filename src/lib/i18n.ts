@@ -123,6 +123,18 @@ const translations: Record<Lang, Record<string, string>> = {
     'call.speakerOff': 'Turn off speaker',
     'call.speakerOn': 'Turn on speaker',
 
+    // Voice Effects
+    'profile.voiceEffect': 'VOICE EFFECT',
+    'voiceEffect.none': 'None',
+    'voiceEffect.robot': 'Robot',
+    'voiceEffect.deep': 'Deep Voice',
+    'voiceEffect.high': 'High Voice',
+    'voiceEffect.echo': 'Echo',
+    'call.modalTitle': 'Start Call',
+    'call.normalCall': 'Normal Call',
+    'call.modifiedCall': 'Voice Modified',
+    'call.cancel': 'Cancel',
+
     // App Layout
     'layout.emptyTitle': 'ChitChat Internal Grid',
     'layout.emptyDescription': 'Select a channel from the left or start a new conversation for secure corporate messaging.',
@@ -248,6 +260,18 @@ const translations: Record<Lang, Record<string, string>> = {
     'call.endAria': 'Aramayi sonlandir',
     'call.speakerOff': 'Hoparloru kapat',
     'call.speakerOn': 'Hoparloru ac',
+
+    // Voice Effects
+    'profile.voiceEffect': 'SES EFEKTI',
+    'voiceEffect.none': 'Yok',
+    'voiceEffect.robot': 'Robot',
+    'voiceEffect.deep': 'Kalin Ses',
+    'voiceEffect.high': 'Ince Ses',
+    'voiceEffect.echo': 'Yanki',
+    'call.modalTitle': 'Arama Baslat',
+    'call.normalCall': 'Normal Arama',
+    'call.modifiedCall': 'Ses Degistirerek',
+    'call.cancel': 'Iptal',
 
     // App Layout
     'layout.emptyTitle': 'ChitChat Internal Grid',

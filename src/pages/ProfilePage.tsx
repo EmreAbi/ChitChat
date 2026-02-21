@@ -4,6 +4,7 @@ import { supabase } from '../lib/supabase'
 import { useAuth } from '../contexts/AuthContext'
 import { useT } from '../contexts/LanguageContext'
 import Avatar from '../components/common/Avatar'
+import { VOICE_EFFECTS, getStoredVoiceEffect, setStoredVoiceEffect, type VoiceEffect } from '../lib/voiceEffects'
 
 export default function ProfilePage() {
   const navigate = useNavigate()
@@ -12,6 +13,7 @@ export default function ProfilePage() {
   const [displayName, setDisplayName] = useState(profile?.display_name ?? '')
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
+  const [voiceEffect, setVoiceEffect] = useState<VoiceEffect>(getStoredVoiceEffect)
 
   async function handleSave() {
     if (!profile || !displayName.trim()) return
@@ -63,6 +65,23 @@ export default function ProfilePage() {
           >
             <option value="en">English</option>
             <option value="tr">Turkish</option>
+          </select>
+        </div>
+
+        <div>
+          <label className="text-sm text-text-muted mb-1 block mono-ui">{t('profile.voiceEffect')}</label>
+          <select
+            value={voiceEffect}
+            onChange={e => {
+              const v = e.target.value as VoiceEffect
+              setVoiceEffect(v)
+              setStoredVoiceEffect(v)
+            }}
+            className="w-full px-4 py-3 rounded-xl border border-stroke-soft bg-[#13261d] text-text-primary focus:border-whatsapp-teal focus:ring-2 focus:ring-whatsapp-teal/20 outline-none text-sm transition appearance-none cursor-pointer"
+          >
+            {VOICE_EFFECTS.map(ve => (
+              <option key={ve.id} value={ve.id}>{t(ve.labelKey)}</option>
+            ))}
           </select>
         </div>
 

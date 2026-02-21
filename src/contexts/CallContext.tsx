@@ -11,6 +11,7 @@ import { supabase } from '../lib/supabase'
 import { useAuth } from './AuthContext'
 import { getTurnCredentials } from '../lib/turnCredentials'
 import { playRingtone, playRingback, stopAllTones } from '../lib/ringtoneSound'
+import { applyVoiceEffect, getStoredVoiceEffect, type VoiceEffect } from '../lib/voiceEffects'
 import type { CallState } from '../lib/types'
 
 // --- Actions ---
@@ -74,7 +75,8 @@ function callReducer(state: CallState, action: CallAction): CallState {
 
 interface CallContextType {
   callState: CallState
-  startCall: (conversationId: string, remoteUser: CallState['remoteUser']) => Promise<void>
+  voiceEffect: VoiceEffect
+  startCall: (conversationId: string, remoteUser: CallState['remoteUser'], voiceEffect?: VoiceEffect) => Promise<void>
   acceptCall: () => void
   rejectCall: () => void
   endCall: () => void
@@ -98,6 +100,8 @@ export function CallProvider({ children }: { children: ReactNode }) {
   const sessionChannel = useRef<ReturnType<typeof supabase.channel> | null>(null)
   const stopTone = useRef<(() => void) | null>(null)
   const ringTimeout = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const audioContextRef = useRef<AudioContext | null>(null)
+  const voiceEffectRef = useRef<VoiceEffect>(getStoredVoiceEffect())
 
   // Store callState in ref for use in callbacks
   const callStateRef = useRef(callState)
@@ -119,6 +123,10 @@ export function CallProvider({ children }: { children: ReactNode }) {
       peerConnection.current.close()
       peerConnection.current = null
     }
+    if (audioContextRef.current) {
+      audioContextRef.current.close().catch(() => {})
+      audioContextRef.current = null
+    }
     if (localStream.current) {
       localStream.current.getTracks().forEach(t => t.stop())
       localStream.current = null
@@ -131,7 +139,7 @@ export function CallProvider({ children }: { children: ReactNode }) {
 
   // --- Create WebRTC Peer Connection ---
 
-  const createPeerConnection = useCallback(async (_callLogId: string) => {
+  const createPeerConnection = useCallback(async (_callLogId: string, effect: VoiceEffect = 'none') => {
     const iceServers = await getTurnCredentials()
     const pc = new RTCPeerConnection({ iceServers })
     peerConnection.current = pc
@@ -139,7 +147,20 @@ export function CallProvider({ children }: { children: ReactNode }) {
     // Get local audio
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false })
     localStream.current = stream
-    stream.getTracks().forEach(track => pc.addTrack(track, stream))
+
+    if (effect !== 'none') {
+      // Insert Web Audio API processing between mic and peer connection
+      const actx = new AudioContext()
+      audioContextRef.current = actx
+      const source = actx.createMediaStreamSource(stream)
+      const effectOutput = applyVoiceEffect(actx, source, effect)
+      const destination = actx.createMediaStreamDestination()
+      effectOutput.connect(destination)
+      // Add processed tracks to pc instead of raw tracks
+      destination.stream.getTracks().forEach(track => pc.addTrack(track, destination.stream))
+    } else {
+      stream.getTracks().forEach(track => pc.addTrack(track, stream))
+    }
 
     // Handle remote audio
     pc.ontrack = (event) => {
@@ -296,8 +317,9 @@ export function CallProvider({ children }: { children: ReactNode }) {
 
   // --- Start a call (caller side) ---
 
-  const startCall = useCallback(async (conversationId: string, remoteUser: CallState['remoteUser']) => {
+  const startCall = useCallback(async (conversationId: string, remoteUser: CallState['remoteUser'], voiceEffect: VoiceEffect = 'none') => {
     if (!session?.user?.id || !remoteUser || callStateRef.current.status !== 'idle') return
+    voiceEffectRef.current = voiceEffect
 
     // Create call log
     const { data: callLog, error } = await supabase
@@ -361,7 +383,7 @@ export function CallProvider({ children }: { children: ReactNode }) {
         await supabase.from('call_logs').update({ answered_at: new Date().toISOString() }).eq('id', callLog.id)
 
         // Create peer connection and session channel
-        const pc = await createPeerConnection(callLog.id)
+        const pc = await createPeerConnection(callLog.id, voiceEffectRef.current)
         joinSessionChannel(callLog.id, true)
 
         // Caller creates offer
@@ -534,7 +556,7 @@ export function CallProvider({ children }: { children: ReactNode }) {
   }, [cleanup])
 
   return (
-    <CallContext.Provider value={{ callState, startCall, acceptCall, rejectCall, endCall, toggleMute, toggleSpeaker }}>
+    <CallContext.Provider value={{ callState, voiceEffect: voiceEffectRef.current, startCall, acceptCall, rejectCall, endCall, toggleMute, toggleSpeaker }}>
       {children}
     </CallContext.Provider>
   )

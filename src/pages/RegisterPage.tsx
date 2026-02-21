@@ -46,7 +46,7 @@ export default function RegisterPage() {
       .from('app_settings' as any)
       .select('value')
       .eq('key', 'registration_password')
-      .single()
+      .maybeSingle()
 
     if (settingsError || !settings) {
       setError(t('register.systemError'))
