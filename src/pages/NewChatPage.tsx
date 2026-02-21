@@ -65,23 +65,34 @@ export default function NewChatPage() {
   async function addContact(userId: string) {
     if (!session) return
     setAddingId(userId)
+    // Optimistic update
+    const user = searchResults.find(u => u.id === userId)
+    if (user) {
+      setContacts(prev => [user, ...prev])
+      setContactIds(prev => new Set([...prev, userId]))
+    }
     await supabase.from('contacts').insert({
       user_id: session.user.id,
       contact_user_id: userId,
     })
-    await fetchContacts()
     setAddingId(null)
   }
 
   async function removeContact(userId: string) {
     if (!session) return
     setAddingId(userId)
+    // Optimistic update
+    setContacts(prev => prev.filter(c => c.id !== userId))
+    setContactIds(prev => {
+      const next = new Set(prev)
+      next.delete(userId)
+      return next
+    })
     await supabase
       .from('contacts')
       .delete()
       .eq('user_id', session.user.id)
       .eq('contact_user_id', userId)
-    await fetchContacts()
     setAddingId(null)
   }
 
