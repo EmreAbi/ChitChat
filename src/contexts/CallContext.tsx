@@ -502,10 +502,10 @@ export function CallProvider({ children }: { children: ReactNode }) {
       .on('broadcast', { event: 'ice-candidate' }, async ({ payload }) => {
         if (payload.targetId !== myUserId) return
         const senderId = payload.senderId as string
-        const entry = peers.current.get(senderId)
-        if (!entry) return
         const candidate = new RTCIceCandidate(payload.candidate)
-        if (!entry.pc.remoteDescription) {
+        const entry = peers.current.get(senderId)
+        // Buffer if peer doesn't exist yet OR remote description not set
+        if (!entry || !entry.pc.remoteDescription) {
           const pending = pendingCandidatesMap.get(senderId) || []
           pending.push(candidate)
           pendingCandidatesMap.set(senderId, pending)
