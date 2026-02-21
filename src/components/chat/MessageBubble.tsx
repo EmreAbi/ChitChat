@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import type { MessageWithSender } from '../../hooks/useMessages'
 import ReadReceipt from './ReadReceipt'
 import { parseFileContent, formatFileSize, isImageMimeType } from '../../lib/types'
@@ -24,15 +25,41 @@ function formatTime(dateStr: string): string {
 }
 
 function ImageContent({ url, name }: { url: string; name: string }) {
+  const [open, setOpen] = useState(false)
+
   return (
-    <a href={url} target="_blank" rel="noopener noreferrer" className="block">
-      <img
-        src={url}
-        alt={name}
-        className="rounded-lg max-w-full max-h-64 object-cover"
-        loading="lazy"
-      />
-    </a>
+    <>
+      <button type="button" onClick={() => setOpen(true)} className="block cursor-zoom-in">
+        <img
+          src={url}
+          alt={name}
+          className="rounded-lg max-w-full max-h-64 object-cover"
+          loading="lazy"
+        />
+      </button>
+      {open && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm"
+          onClick={() => setOpen(false)}
+        >
+          <button
+            type="button"
+            onClick={() => setOpen(false)}
+            className="absolute top-4 right-4 w-10 h-10 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
+          >
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+          <img
+            src={url}
+            alt={name}
+            className="max-w-[90vw] max-h-[90vh] object-contain rounded-lg shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          />
+        </div>
+      )}
+    </>
   )
 }
 
