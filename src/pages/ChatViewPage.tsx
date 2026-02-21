@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, useCallback } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useParams } from 'react-router'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../contexts/AuthContext'
@@ -13,6 +13,34 @@ import TypingIndicator from '../components/chat/TypingIndicator'
 import LoadingSpinner from '../components/common/LoadingSpinner'
 import type { ConversationWithDetails, MemberInfo } from '../lib/types'
 
+function toDayKeyFromDate(date: Date): string {
+  return `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`
+}
+
+function toDayKey(dateStr: string): string {
+  return toDayKeyFromDate(new Date(dateStr))
+}
+
+function formatDayLabel(dateStr: string): string {
+  const date = new Date(dateStr)
+  const today = new Date()
+  const yesterday = new Date()
+  yesterday.setDate(today.getDate() - 1)
+
+  if (toDayKeyFromDate(date) === toDayKeyFromDate(today)) {
+    return 'Bugun'
+  }
+  if (toDayKeyFromDate(date) === toDayKeyFromDate(yesterday)) {
+    return 'Dun'
+  }
+
+  return date.toLocaleDateString('tr-TR', {
+    day: 'numeric',
+    month: 'long',
+    weekday: 'short',
+  })
+}
+
 export default function ChatViewPage() {
   const { id } = useParams<{ id: string }>()
   const { session } = useAuth()
@@ -23,6 +51,7 @@ export default function ChatViewPage() {
   const [conversation, setConversation] = useState<ConversationWithDetails | null>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
+  const hasInitialScroll = useRef(false)
   const [showScrollBtn, setShowScrollBtn] = useState(false)
   const [readReceipts, setReadReceipts] = useState<Set<string>>(new Set())
 
@@ -55,6 +84,7 @@ export default function ChatViewPage() {
     if (!id || !session || messages.length === 0) return
 
     const myMessageIds = messages.filter(m => m.sender_id === session.user.id).map(m => m.id)
+    const myMessageIdSet = new Set(myMessageIds)
     if (myMessageIds.length === 0) return
 
     async function fetchReceipts() {
@@ -76,7 +106,7 @@ export default function ChatViewPage() {
         { event: 'INSERT', schema: 'public', table: 'message_read_receipts' },
         (payload) => {
           const receipt = payload.new as { message_id: string; user_id: string }
-          if (myMessageIds.includes(receipt.message_id)) {
+          if (myMessageIdSet.has(receipt.message_id)) {
             setReadReceipts(prev => new Set([...prev, receipt.message_id]))
           }
         }
@@ -84,10 +114,15 @@ export default function ChatViewPage() {
       .subscribe()
 
     return () => { supabase.removeChannel(channel) }
-  }, [id, session, messages.length])
+  }, [id, messages, session])
 
   // Auto-scroll
   useEffect(() => {
+    if (!hasInitialScroll.current) {
+      messagesEndRef.current?.scrollIntoView({ behavior: 'auto' })
+      hasInitialScroll.current = true
+      return
+    }
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages, typingUsers.size])
 
@@ -101,7 +136,7 @@ export default function ChatViewPage() {
   const otherMembers = conversation?.members.filter(m => m.user_id !== session?.user.id) ?? []
   const isGroup = conversation?.type === 'group'
 
-  const handleCall = useCallback(() => {
+  function handleCall() {
     if (!id || !otherMembers[0]) return
     const member = otherMembers[0]
     startCall(id, {
@@ -109,13 +144,13 @@ export default function ChatViewPage() {
       displayName: member.display_name,
       avatarUrl: member.avatar_url,
     })
-  }, [id, otherMembers, startCall])
+  }
 
   if (!id) return null
 
   const displayName = isGroup
     ? conversation?.name || 'Group'
-    : otherMembers[0]?.display_name || 'Chat'
+    : otherMembers[0]?.display_name || 'Sohbet'
 
   let subtitle: string | undefined
   if (isGroup) {
@@ -133,7 +168,7 @@ export default function ChatViewPage() {
   }
 
   return (
-    <div className="flex flex-col h-[100dvh] md:h-full flex-1 bg-white">
+    <div className="flex flex-col h-[100dvh] md:h-full flex-1 bg-white relative">
       <ChatHeader
         name={displayName}
         avatarUrl={isGroup ? conversation?.avatar_url : otherMembers[0]?.avatar_url}
@@ -157,14 +192,23 @@ export default function ChatViewPage() {
               const showSender = isGroup && !isOwn && (
                 i === 0 || messages[i - 1].sender_id !== msg.sender_id
               )
+              const showDaySeparator = i === 0 || toDayKey(messages[i - 1].created_at) !== toDayKey(msg.created_at)
               return (
-                <MessageBubble
-                  key={msg.id}
-                  message={msg}
-                  isOwn={isOwn}
-                  showSender={showSender}
-                  readStatus={isOwn ? getReadStatus(msg.id) : undefined}
-                />
+                <div key={msg.id}>
+                  {showDaySeparator && (
+                    <div className="sticky top-2 z-[1] flex justify-center my-3">
+                      <span className="bg-white/90 border border-gray-200 rounded-full px-3 py-1 text-[11px] font-medium text-gray-500 shadow-sm backdrop-blur-sm">
+                        {formatDayLabel(msg.created_at)}
+                      </span>
+                    </div>
+                  )}
+                  <MessageBubble
+                    message={msg}
+                    isOwn={isOwn}
+                    showSender={showSender}
+                    readStatus={isOwn ? getReadStatus(msg.id) : undefined}
+                  />
+                </div>
               )
             })}
             <TypingIndicator typingUsers={typingUsers} />
@@ -176,7 +220,8 @@ export default function ChatViewPage() {
       {showScrollBtn && (
         <button
           onClick={() => messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })}
-          className="absolute bottom-20 right-4 w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center text-gray-600 hover:bg-gray-50 z-10"
+          className="absolute bottom-20 right-4 w-10 h-10 bg-white border border-gray-200 rounded-xl shadow-lg flex items-center justify-center text-gray-600 hover:bg-gray-50 z-10"
+          aria-label="En alta git"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
             <path strokeLinecap="round" strokeLinejoin="round" d="M19 14l-7 7m0 0l-7-7m7 7V3" />

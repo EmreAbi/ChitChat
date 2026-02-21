@@ -14,6 +14,11 @@
   --color-unread-badge: #25D366;
   --color-tick-blue: #53BDEB;
   --color-typing-dots: #075E54;
+  --color-surface: #F6FBF9;
+  --color-surface-elevated: #FFFFFF;
+  --color-stroke-soft: #D9ECE7;
+  --color-text-primary: #0F2A26;
+  --color-text-muted: #66817A;
 }
 
 html, body, #root {
@@ -25,8 +30,12 @@ html, body, #root {
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-  background-color: var(--color-chat-bg);
+  font-family: "Avenir Next", "SF Pro Text", "Segoe UI", "Helvetica Neue", sans-serif;
+  background:
+    radial-gradient(circle at 15% 10%, rgba(37, 211, 102, 0.2), transparent 35%),
+    radial-gradient(circle at 85% 95%, rgba(18, 140, 126, 0.18), transparent 30%),
+    linear-gradient(180deg, #f4fffb 0%, #eaf6f2 45%, #e3f1ed 100%);
+  color: var(--color-text-primary);
   padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
 }
 
@@ -39,6 +48,18 @@ input, textarea, select {
 /* Prevent double-tap zoom */
 * {
   touch-action: manipulation;
+}
+
+button {
+  cursor: pointer;
+}
+
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+[role="button"]:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--color-whatsapp-teal) 70%, white);
+  outline-offset: 2px;
 }
 
 ::-webkit-scrollbar {
@@ -90,4 +111,19 @@ input, textarea, select {
 
 .animate-pulse-ring {
   animation: pulse-ring 1.5s ease-out infinite;
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-up {
+  animation: fade-up 240ms ease-out;
 }

@@ -70,7 +70,7 @@ export default function NewChatPage() {
   }
 
   return (
-    <div className="flex flex-col h-full w-full bg-white">
+    <div className="flex flex-col h-full w-full bg-surface-elevated">
       <header className="bg-header-bg text-header-text flex items-center gap-3 px-2 py-3 shadow-md z-10">
         <button onClick={() => navigate(-1)} className="p-1 hover:bg-white/10 rounded-full transition-colors">
           <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
@@ -78,18 +78,18 @@ export default function NewChatPage() {
           </svg>
         </button>
         <div>
-          <h2 className="font-semibold">New Chat</h2>
-          <p className="text-xs text-white/70">{users.length} contacts</p>
+          <h2 className="font-semibold">Yeni Sohbet</h2>
+          <p className="text-xs text-white/70">{users.length} kisi</p>
         </div>
       </header>
 
-      <div className="px-3 py-2">
+      <div className="px-3 py-2 border-b border-stroke-soft/70">
         <input
           type="text"
-          placeholder="Search users..."
+          placeholder="Kisi ara..."
           value={search}
           onChange={e => setSearch(e.target.value)}
-          className="w-full px-4 py-2 text-sm bg-gray-100 rounded-lg outline-none focus:bg-white focus:ring-1 focus:ring-whatsapp-teal"
+          className="w-full px-4 py-2.5 text-sm bg-gray-100 rounded-xl border border-transparent outline-none focus:bg-white focus:border-whatsapp-teal/30 focus:ring-2 focus:ring-whatsapp-teal/20 transition"
         />
       </div>
 
@@ -97,19 +97,19 @@ export default function NewChatPage() {
         {loading ? (
           <LoadingSpinner className="mt-12" />
         ) : filtered.length === 0 ? (
-          <p className="text-center text-gray-500 text-sm mt-8">No users found</p>
+          <p className="text-center text-gray-500 text-sm mt-8">Kisi bulunamadi</p>
         ) : (
           filtered.map(user => (
             <button
               key={user.id}
               onClick={() => startChat(user.id)}
               disabled={creating}
-              className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-50 active:bg-gray-100 transition-colors disabled:opacity-50"
+              className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-50 active:bg-gray-100 transition-colors disabled:opacity-50 text-left"
             >
               <Avatar name={user.display_name} avatarUrl={user.avatar_url} />
-              <div className="text-left">
-                <p className="font-semibold text-gray-900">{user.display_name}</p>
-                <p className="text-sm text-gray-500">{user.email}</p>
+              <div className="text-left min-w-0">
+                <p className="font-semibold text-gray-900 truncate">{user.display_name}</p>
+                <p className="text-sm text-gray-500 truncate">{user.email}</p>
               </div>
             </button>
           ))

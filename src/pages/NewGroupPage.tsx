@@ -95,7 +95,7 @@ export default function NewGroupPage() {
   if (step === 'details') {
     const selectedUsers = users.filter(u => selected.has(u.id))
     return (
-      <div className="flex flex-col h-full w-full bg-white">
+      <div className="flex flex-col h-full w-full bg-surface-elevated">
         <header className="bg-header-bg text-header-text flex items-center gap-3 px-2 py-3 shadow-md z-10">
           <button onClick={() => setStep('members')} className="p-1 hover:bg-white/10 rounded-full transition-colors">
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
@@ -103,23 +103,23 @@ export default function NewGroupPage() {
             </svg>
           </button>
           <div>
-            <h2 className="font-semibold">New Group</h2>
-            <p className="text-xs text-white/70">Add group info</p>
+            <h2 className="font-semibold">Yeni Grup</h2>
+            <p className="text-xs text-white/70">Grup bilgilerini ekle</p>
           </div>
         </header>
 
         <div className="p-4 space-y-4">
           <input
             type="text"
-            placeholder="Group name"
+            placeholder="Grup adi"
             value={groupName}
             onChange={e => setGroupName(e.target.value)}
-            className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-whatsapp-teal focus:ring-1 focus:ring-whatsapp-teal outline-none text-sm"
+            className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-whatsapp-teal focus:ring-2 focus:ring-whatsapp-teal/20 outline-none text-sm"
             autoFocus
           />
 
           <div>
-            <p className="text-sm text-gray-500 mb-2">Members: {selectedUsers.length}</p>
+            <p className="text-sm text-gray-500 mb-2">Uyeler: {selectedUsers.length}</p>
             <div className="flex flex-wrap gap-2">
               {selectedUsers.map(u => (
                 <div key={u.id} className="flex items-center gap-1.5 bg-gray-100 rounded-full pl-1 pr-3 py-1">
@@ -135,9 +135,9 @@ export default function NewGroupPage() {
           <button
             onClick={createGroup}
             disabled={!groupName.trim() || creating}
-            className="w-full py-3 bg-whatsapp-green text-white rounded-lg font-semibold hover:bg-whatsapp-teal transition-colors disabled:opacity-50"
+            className="w-full py-3 bg-whatsapp-green text-white rounded-xl font-semibold hover:bg-whatsapp-teal transition-colors disabled:opacity-50"
           >
-            {creating ? 'Creating...' : 'Create Group'}
+            {creating ? 'Olusturuluyor...' : 'Grup Olustur'}
           </button>
         </div>
       </div>
@@ -145,7 +145,7 @@ export default function NewGroupPage() {
   }
 
   return (
-    <div className="flex flex-col h-full w-full bg-white">
+    <div className="flex flex-col h-full w-full bg-surface-elevated">
       <header className="bg-header-bg text-header-text flex items-center gap-3 px-2 py-3 shadow-md z-10">
         <button onClick={() => navigate(-1)} className="p-1 hover:bg-white/10 rounded-full transition-colors">
           <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
@@ -153,8 +153,8 @@ export default function NewGroupPage() {
           </svg>
         </button>
         <div>
-          <h2 className="font-semibold">New Group</h2>
-          <p className="text-xs text-white/70">Select members</p>
+          <h2 className="font-semibold">Yeni Grup</h2>
+          <p className="text-xs text-white/70">Uyeleri sec</p>
         </div>
       </header>
 
@@ -180,10 +180,10 @@ export default function NewGroupPage() {
       <div className="px-3 py-2">
         <input
           type="text"
-          placeholder="Search users..."
+          placeholder="Kisi ara..."
           value={search}
           onChange={e => setSearch(e.target.value)}
-          className="w-full px-4 py-2 text-sm bg-gray-100 rounded-lg outline-none focus:bg-white focus:ring-1 focus:ring-whatsapp-teal"
+          className="w-full px-4 py-2.5 text-sm bg-gray-100 rounded-xl border border-transparent outline-none focus:bg-white focus:border-whatsapp-teal/30 focus:ring-2 focus:ring-whatsapp-teal/20 transition"
         />
       </div>
 
@@ -195,7 +195,7 @@ export default function NewGroupPage() {
             <button
               key={user.id}
               onClick={() => toggleUser(user.id)}
-              className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors"
+              className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors text-left"
             >
               <Avatar name={user.display_name} avatarUrl={user.avatar_url} />
               <div className="flex-1 text-left">
@@ -220,9 +220,9 @@ export default function NewGroupPage() {
         <div className="p-3 border-t border-gray-200">
           <button
             onClick={() => setStep('details')}
-            className="w-full py-3 bg-whatsapp-green text-white rounded-lg font-semibold hover:bg-whatsapp-teal transition-colors"
+            className="w-full py-3 bg-whatsapp-green text-white rounded-xl font-semibold hover:bg-whatsapp-teal transition-colors"
           >
-            Next ({selected.size} selected)
+            Ileri ({selected.size} secili)
           </button>
         </div>
       )}
