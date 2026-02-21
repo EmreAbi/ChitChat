@@ -153,7 +153,7 @@ export function CallProvider({ children }: { children: ReactNode }) {
       const actx = new AudioContext()
       audioContextRef.current = actx
       const source = actx.createMediaStreamSource(stream)
-      const effectOutput = applyVoiceEffect(actx, source, effect)
+      const effectOutput = await applyVoiceEffect(actx, source, effect)
       const destination = actx.createMediaStreamDestination()
       effectOutput.connect(destination)
       // Add processed tracks to pc instead of raw tracks
