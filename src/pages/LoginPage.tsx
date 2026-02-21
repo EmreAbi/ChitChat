@@ -1,9 +1,11 @@
 import { useState, type FormEvent } from 'react'
 import { Link, Navigate } from 'react-router'
 import { useAuth } from '../contexts/AuthContext'
+import { useT } from '../contexts/LanguageContext'
 
 export default function LoginPage() {
   const { signIn, session, loading } = useAuth()
+  const { t } = useT()
   const [nickname, setNickname] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
@@ -29,8 +31,8 @@ export default function LoginPage() {
               <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
             </svg>
           </div>
-          <h1 className="text-2xl font-bold text-text-primary tracking-[0.08em] uppercase mono-ui">ESA</h1>
-          <p className="text-sm text-text-muted mt-1">Encrypted Secure App</p>
+          <h1 className="text-2xl font-bold text-text-primary tracking-[0.08em] uppercase mono-ui">{t('login.title')}</h1>
+          <p className="text-sm text-text-muted mt-1">{t('login.subtitle')}</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-3.5">
@@ -38,10 +40,10 @@ export default function LoginPage() {
             <div className="bg-red-950/40 border border-red-800/50 text-red-300 text-sm p-3 rounded-xl">{error}</div>
           )}
           <label className="block">
-            <span className="mb-1.5 block text-xs font-medium text-text-muted mono-ui">NICKNAME</span>
+            <span className="mb-1.5 block text-xs font-medium text-text-muted mono-ui">{t('login.nickname')}</span>
             <input
               type="text"
-              placeholder="Nickname'ini gir"
+              placeholder={t('login.nicknamePlaceholder')}
               value={nickname}
               onChange={e => setNickname(e.target.value)}
               required
@@ -50,10 +52,10 @@ export default function LoginPage() {
             />
           </label>
           <label className="block">
-            <span className="mb-1.5 block text-xs font-medium text-text-muted mono-ui">PASSWORD</span>
+            <span className="mb-1.5 block text-xs font-medium text-text-muted mono-ui">{t('login.password')}</span>
             <input
               type="password"
-              placeholder="Sifreni gir"
+              placeholder={t('login.passwordPlaceholder')}
               value={password}
               onChange={e => setPassword(e.target.value)}
               required
@@ -66,14 +68,14 @@ export default function LoginPage() {
             disabled={submitting}
             className="w-full py-3 bg-whatsapp-green text-[#06110d] rounded-xl font-semibold hover:bg-[#72ffb4] transition-colors disabled:opacity-50 shadow-sm"
           >
-            {submitting ? 'Giris yapiliyor...' : 'Giris Yap'}
+            {submitting ? t('login.submitting') : t('login.submit')}
           </button>
         </form>
 
         <p className="text-center text-sm text-text-muted mt-6">
-          Hesabin yok mu?{' '}
+          {t('login.noAccount')}{' '}
           <Link to="/register" className="text-whatsapp-green font-semibold hover:underline">
-            Kayit Ol
+            {t('login.signUp')}
           </Link>
         </p>
       </div>

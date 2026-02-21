@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router'
 import { AuthProvider } from './contexts/AuthContext'
+import { LanguageProvider } from './contexts/LanguageContext'
 import { PresenceProvider } from './contexts/PresenceContext'
 import { CallProvider } from './contexts/CallContext'
 import ProtectedRoute from './components/layout/ProtectedRoute'
@@ -16,6 +17,7 @@ import ProfilePage from './pages/ProfilePage'
 export default function App() {
   return (
     <BrowserRouter>
+      <LanguageProvider>
       <AuthProvider>
         <PresenceProvider>
           <CallProvider>
@@ -38,6 +40,7 @@ export default function App() {
           </CallProvider>
         </PresenceProvider>
       </AuthProvider>
+      </LanguageProvider>
     </BrowserRouter>
   )
 }

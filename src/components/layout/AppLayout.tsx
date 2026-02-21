@@ -1,9 +1,11 @@
 import { Outlet, useLocation } from 'react-router'
+import { useT } from '../../contexts/LanguageContext'
 import ChatListPage from '../../pages/ChatListPage'
 import EmptyState from '../common/EmptyState'
 
 export default function AppLayout() {
   const location = useLocation()
+  const { t } = useT()
   const isRootPath = location.pathname === '/'
   const showRightPanel = !isRootPath
 
@@ -23,8 +25,8 @@ export default function AppLayout() {
             <div className="h-full bg-surface flex items-center justify-center">
               <EmptyState
                 icon="🛡️"
-                title="ChitChat Internal Grid"
-                description="Guvenli kurumsal mesajlasma icin soldan bir kanal sec veya yeni bir gorusme baslat."
+                title={t('layout.emptyTitle')}
+                description={t('layout.emptyDescription')}
               />
             </div>
           )}

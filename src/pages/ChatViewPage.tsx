@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useParams } from 'react-router'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../contexts/AuthContext'
+import { useT } from '../contexts/LanguageContext'
 import { usePresenceContext } from '../contexts/PresenceContext'
 import { useCall } from '../contexts/CallContext'
 import { useMessages } from '../hooks/useMessages'
@@ -22,29 +23,10 @@ function toDayKey(dateStr: string): string {
   return toDayKeyFromDate(new Date(dateStr))
 }
 
-function formatDayLabel(dateStr: string): string {
-  const date = new Date(dateStr)
-  const today = new Date()
-  const yesterday = new Date()
-  yesterday.setDate(today.getDate() - 1)
-
-  if (toDayKeyFromDate(date) === toDayKeyFromDate(today)) {
-    return 'Bugun'
-  }
-  if (toDayKeyFromDate(date) === toDayKeyFromDate(yesterday)) {
-    return 'Dun'
-  }
-
-  return date.toLocaleDateString('tr-TR', {
-    day: 'numeric',
-    month: 'long',
-    weekday: 'short',
-  })
-}
-
 export default function ChatViewPage() {
   const { id } = useParams<{ id: string }>()
   const { session } = useAuth()
+  const { lang, t } = useT()
   const { isOnline } = usePresenceContext()
   const { startCall } = useCall()
   const { messages, loading, sendMessage } = useMessages(id)
@@ -56,6 +38,27 @@ export default function ChatViewPage() {
   const hasInitialScroll = useRef(false)
   const [showScrollBtn, setShowScrollBtn] = useState(false)
   const [readReceipts, setReadReceipts] = useState<Set<string>>(new Set())
+
+  function formatDayLabel(dateStr: string): string {
+    const date = new Date(dateStr)
+    const today = new Date()
+    const yesterday = new Date()
+    yesterday.setDate(today.getDate() - 1)
+
+    if (toDayKeyFromDate(date) === toDayKeyFromDate(today)) {
+      return t('chat.today')
+    }
+    if (toDayKeyFromDate(date) === toDayKeyFromDate(yesterday)) {
+      return t('chat.yesterday')
+    }
+
+    const locale = lang === 'tr' ? 'tr-TR' : 'en-US'
+    return date.toLocaleDateString(locale, {
+      day: 'numeric',
+      month: 'long',
+      weekday: 'short',
+    })
+  }
 
   // Fetch conversation details
   useEffect(() => {
@@ -153,14 +156,14 @@ export default function ChatViewPage() {
   if (!id) return null
 
   const displayName = isGroup
-    ? conversation?.name || 'Group'
-    : otherMembers[0]?.display_name || 'Secure Chat'
+    ? conversation?.name || t('chat.group')
+    : otherMembers[0]?.display_name || t('chat.secureChat')
 
   let subtitle: string | undefined
   if (isGroup) {
     subtitle = conversation?.members.map(m => m.display_name).join(', ')
   } else if (otherMembers[0] && isOnline(otherMembers[0].user_id)) {
-    subtitle = 'online'
+    subtitle = t('chat.online')
   }
 
   const otherMemberCount = otherMembers.length
@@ -225,7 +228,7 @@ export default function ChatViewPage() {
         <button
           onClick={() => messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })}
           className="absolute bottom-20 right-4 w-10 h-10 bg-[#13261d] border border-stroke-soft rounded-xl shadow-lg flex items-center justify-center text-text-primary hover:bg-[#183329] z-10"
-          aria-label="En alta git"
+          aria-label={t('chat.scrollDown')}
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
             <path strokeLinecap="round" strokeLinejoin="round" d="M19 14l-7 7m0 0l-7-7m7 7V3" />

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useCall } from '../../contexts/CallContext'
+import { useT } from '../../contexts/LanguageContext'
 import Avatar from '../common/Avatar'
 
 function formatDuration(seconds: number): string {
@@ -10,6 +11,7 @@ function formatDuration(seconds: number): string {
 
 export default function ActiveCallScreen() {
   const { callState, endCall, toggleMute, toggleSpeaker } = useCall()
+  const { t } = useT()
   const [now, setNow] = useState(() => Date.now())
 
   const isActive = callState.status === 'outgoing_ringing' ||
@@ -32,9 +34,9 @@ export default function ActiveCallScreen() {
     : 0
 
   const statusText = callState.status === 'outgoing_ringing'
-    ? 'Aranıyor...'
+    ? t('call.ringing')
     : callState.status === 'connecting'
-      ? 'Bağlanıyor...'
+      ? t('call.connecting')
       : formatDuration(elapsed)
 
   return (
@@ -58,7 +60,7 @@ export default function ActiveCallScreen() {
           className={`w-14 h-14 rounded-full flex items-center justify-center transition-colors ${
             callState.isMuted ? 'bg-white text-gray-900' : 'bg-white/20 text-white'
           }`}
-          aria-label={callState.isMuted ? 'Mikrofonu ac' : 'Mikrofonu kapat'}
+          aria-label={callState.isMuted ? t('call.unmute') : t('call.mute')}
         >
           {callState.isMuted ? (
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
@@ -76,7 +78,7 @@ export default function ActiveCallScreen() {
         <button
           onClick={endCall}
           className="w-16 h-16 rounded-full bg-red-500 hover:bg-red-600 flex items-center justify-center text-white shadow-lg transition-colors"
-          aria-label="Aramayi sonlandir"
+          aria-label={t('call.endAria')}
         >
           <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
             <path strokeLinecap="round" strokeLinejoin="round" d="M16 8l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2M5 3a2 2 0 00-2 2v1c0 8.284 6.716 15 15 15h1a2 2 0 002-2v-3.28a1 1 0 00-.684-.948l-4.493-1.498a1 1 0 00-1.21.502l-1.13 2.257a11.042 11.042 0 01-5.516-5.517l2.257-1.128a1 1 0 00.502-1.21L9.228 3.683A1 1 0 008.279 3H5z" />
@@ -89,7 +91,7 @@ export default function ActiveCallScreen() {
           className={`w-14 h-14 rounded-full flex items-center justify-center transition-colors ${
             callState.isSpeaker ? 'bg-white text-gray-900' : 'bg-white/20 text-white'
           }`}
-          aria-label={callState.isSpeaker ? 'Hoparloru kapat' : 'Hoparloru ac'}
+          aria-label={callState.isSpeaker ? t('call.speakerOff') : t('call.speakerOn')}
         >
           <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
             <path strokeLinecap="round" strokeLinejoin="round" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />

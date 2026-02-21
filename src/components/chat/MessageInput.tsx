@@ -1,4 +1,5 @@
 import { useState, useRef, useCallback, useEffect, type KeyboardEvent } from 'react'
+import { useT } from '../../contexts/LanguageContext'
 
 interface MessageInputProps {
   onSend: (content: string) => void
@@ -9,6 +10,7 @@ interface MessageInputProps {
 }
 
 export default function MessageInput({ onSend, onTyping, onStopTyping, onFileSelect, uploading }: MessageInputProps) {
+  const { t } = useT()
   const [text, setText] = useState('')
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -79,7 +81,7 @@ export default function MessageInput({ onSend, onTyping, onStopTyping, onFileSel
             onClick={() => fileInputRef.current?.click()}
             disabled={uploading}
             className="shrink-0 w-10 h-10 rounded-2xl flex items-center justify-center text-text-muted hover:text-whatsapp-green hover:bg-whatsapp-green/10 active:bg-whatsapp-green/20 transition-colors disabled:opacity-40"
-            aria-label="Dosya ekle"
+            aria-label={t('messageInput.attachAria')}
           >
             {uploading ? (
               <svg className="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
@@ -106,16 +108,16 @@ export default function MessageInput({ onSend, onTyping, onStopTyping, onFileSel
         value={text}
         onChange={e => handleChange(e.target.value)}
         onKeyDown={handleKeyDown}
-        placeholder="Write encrypted message..."
+        placeholder={t('messageInput.placeholder')}
         rows={1}
         className="flex-1 min-w-0 resize-none rounded-2xl border border-stroke-soft bg-[#13271e] px-3 py-2.5 text-base text-text-primary outline-none focus:border-whatsapp-teal focus:ring-2 focus:ring-whatsapp-teal/20 transition max-h-[120px]"
-        aria-label="Mesaj"
+        aria-label={t('messageInput.textareaAria')}
       />
       <button
         onClick={handleSend}
         disabled={!text.trim()}
         className="shrink-0 w-10 h-10 rounded-2xl bg-whatsapp-green flex items-center justify-center text-[#06110d] active:bg-[#29d883] transition-colors disabled:opacity-40 shadow-sm"
-        aria-label="Mesaji gonder"
+        aria-label={t('messageInput.sendAria')}
       >
         <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
           <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />

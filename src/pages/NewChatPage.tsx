@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../contexts/AuthContext'
+import { useT } from '../contexts/LanguageContext'
 import Avatar from '../components/common/Avatar'
 import LoadingSpinner from '../components/common/LoadingSpinner'
 import type { Profile } from '../lib/types'
@@ -9,6 +10,7 @@ import type { Profile } from '../lib/types'
 export default function NewChatPage() {
   const navigate = useNavigate()
   const { session } = useAuth()
+  const { t } = useT()
   const [users, setUsers] = useState<Profile[]>([])
   const [search, setSearch] = useState('')
   const [loading, setLoading] = useState(true)
@@ -77,15 +79,15 @@ export default function NewChatPage() {
           </svg>
         </button>
         <div>
-          <h2 className="font-semibold">Direct Channel</h2>
-          <p className="text-xs text-text-muted mono-ui">{users.length} contacts</p>
+          <h2 className="font-semibold">{t('newChat.title')}</h2>
+          <p className="text-xs text-text-muted mono-ui">{users.length} {t('newChat.contacts')}</p>
         </div>
       </header>
 
       <div className="px-3 py-2 border-b border-stroke-soft/70">
         <input
           type="text"
-          placeholder="Search contacts..."
+          placeholder={t('newChat.searchPlaceholder')}
           value={search}
           onChange={e => setSearch(e.target.value)}
           className="w-full px-4 py-2.5 text-sm bg-[#13261d] text-text-primary rounded-xl border border-stroke-soft outline-none focus:bg-[#172e24] focus:border-whatsapp-teal/30 focus:ring-2 focus:ring-whatsapp-teal/20 transition"
@@ -96,7 +98,7 @@ export default function NewChatPage() {
         {loading ? (
           <LoadingSpinner className="mt-12" />
         ) : filtered.length === 0 ? (
-          <p className="text-center text-text-muted text-sm mt-8">Kisi bulunamadi</p>
+          <p className="text-center text-text-muted text-sm mt-8">{t('newChat.noResults')}</p>
         ) : (
           filtered.map(user => (
             <button

@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router'
 import { useAuth } from '../contexts/AuthContext'
+import { useT } from '../contexts/LanguageContext'
 import { useConversations } from '../hooks/useConversations'
 import ChatListItem from '../components/chat/ChatListItem'
 import LoadingSpinner from '../components/common/LoadingSpinner'
@@ -10,6 +11,7 @@ import Avatar from '../components/common/Avatar'
 export default function ChatListPage() {
   const navigate = useNavigate()
   const { profile, signOut } = useAuth()
+  const { t } = useT()
   const { conversations, loading } = useConversations()
   const [search, setSearch] = useState('')
   const [filterMode, setFilterMode] = useState<'all' | 'unread' | 'groups'>('all')
@@ -56,9 +58,9 @@ export default function ChatListPage() {
             size="sm"
           />
           <div className="min-w-0">
-            <h1 className="text-sm font-semibold tracking-[0.08em] uppercase mono-ui">ChitChat Node</h1>
+            <h1 className="text-sm font-semibold tracking-[0.08em] uppercase mono-ui">{t('chatList.title')}</h1>
             <p className="text-[11px] text-text-muted truncate mono-ui">
-              {totalUnread > 0 ? `${totalUnread} unread` : 'all clear'}
+              {totalUnread > 0 ? `${totalUnread} ${t('chatList.unread')}` : t('chatList.allClear')}
             </p>
           </div>
         </div>
@@ -66,8 +68,8 @@ export default function ChatListPage() {
           <button
             onClick={() => navigate('/new-group')}
             className="p-2 hover:bg-whatsapp-green/10 rounded-xl transition-colors"
-            title="Yeni ekip"
-            aria-label="Yeni ekip olustur"
+            title={t('chatList.newGroup')}
+            aria-label={t('chatList.newGroupAria')}
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
               <path strokeLinecap="round" strokeLinejoin="round" d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4-4v2m8-4a4 4 0 100-8 4 4 0 000 8zm12 10v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" />
@@ -77,7 +79,7 @@ export default function ChatListPage() {
             <button
               onClick={() => setShowMenu(!showMenu)}
               className="p-2 hover:bg-whatsapp-green/10 rounded-xl transition-colors"
-              aria-label="Menu"
+              aria-label={t('chatList.menu')}
             >
               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                 <circle cx="12" cy="5" r="2" />
@@ -93,13 +95,13 @@ export default function ChatListPage() {
                     onClick={() => { navigate('/profile'); setShowMenu(false) }}
                     className="w-full text-left px-4 py-2 text-sm text-text-primary hover:bg-[#163126]"
                   >
-                    Profil
+                    {t('chatList.profile')}
                   </button>
                   <button
                     onClick={() => { signOut(); setShowMenu(false) }}
                     className="w-full text-left px-4 py-2 text-sm text-red-300 hover:bg-[#163126]"
                   >
-                    Cikis Yap
+                    {t('chatList.signOut')}
                   </button>
                 </div>
               </>
@@ -117,7 +119,7 @@ export default function ChatListPage() {
           </svg>
           <input
             type="text"
-            placeholder="Search secure channels"
+            placeholder={t('chatList.searchPlaceholder')}
             value={search}
             onChange={e => setSearch(e.target.value)}
             className="w-full pl-10 pr-4 py-2.5 text-sm text-text-primary bg-[#13261d] rounded-xl border border-stroke-soft outline-none focus:bg-[#172e24] focus:border-whatsapp-teal/40 focus:ring-2 focus:ring-whatsapp-teal/20 transition"
@@ -125,9 +127,9 @@ export default function ChatListPage() {
         </div>
         <div className="mt-2 flex items-center gap-2">
           {[
-            { key: 'all', label: 'All' },
-            { key: 'unread', label: 'Unread' },
-            { key: 'groups', label: 'Teams' },
+            { key: 'all', label: t('chatList.filterAll') },
+            { key: 'unread', label: t('chatList.filterUnread') },
+            { key: 'groups', label: t('chatList.filterGroups') },
           ].map(tab => (
             <button
               key={tab.key}
@@ -151,8 +153,8 @@ export default function ChatListPage() {
         ) : filtered.length === 0 ? (
           <EmptyState
             icon="💬"
-            title="Henuz sohbet yok"
-            description="Asagidaki butondan yeni bir sohbet baslatabilirsin."
+            title={t('chatList.emptyTitle')}
+            description={t('chatList.emptyDescription')}
           />
         ) : (
           <div className="divide-y divide-stroke-soft/60">
@@ -167,7 +169,7 @@ export default function ChatListPage() {
       <button
         onClick={() => navigate('/new-chat')}
         className="absolute bottom-6 right-6 w-14 h-14 bg-whatsapp-green rounded-2xl shadow-[0_10px_28px_rgba(65,243,154,0.4)] flex items-center justify-center text-[#06110d] hover:bg-[#72ffb4] transition-colors z-10"
-        aria-label="Yeni sohbet baslat"
+        aria-label={t('chatList.newChatAria')}
       >
         <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
           <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H5.17L4 17.17V4h16v12z"/>

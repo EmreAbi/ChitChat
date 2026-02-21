@@ -1,5 +1,6 @@
 import { useLocation, useNavigate } from 'react-router'
 import { useAuth } from '../../contexts/AuthContext'
+import { useT } from '../../contexts/LanguageContext'
 import { usePresenceContext } from '../../contexts/PresenceContext'
 import Avatar from '../common/Avatar'
 import { parseFileContent } from '../../lib/types'
@@ -9,33 +10,36 @@ interface ChatListItemProps {
   conversation: ConversationWithDetails
 }
 
-function formatTime(dateStr: string | null): string {
-  if (!dateStr) return ''
-  const date = new Date(dateStr)
-  const now = new Date()
-  const diffDays = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60 * 24))
-
-  if (diffDays === 0) {
-    return date.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' })
-  } else if (diffDays === 1) {
-    return 'Dun'
-  } else if (diffDays < 7) {
-    return date.toLocaleDateString('tr-TR', { weekday: 'short' })
-  }
-  return date.toLocaleDateString('tr-TR', { month: 'short', day: 'numeric' })
-}
-
 export default function ChatListItem({ conversation }: ChatListItemProps) {
   const navigate = useNavigate()
   const location = useLocation()
   const { session } = useAuth()
+  const { lang, t } = useT()
   const { isOnline } = usePresenceContext()
   const isActive = location.pathname === `/chat/${conversation.id}`
 
+  const locale = lang === 'tr' ? 'tr-TR' : 'en-US'
+
+  function formatTime(dateStr: string | null): string {
+    if (!dateStr) return ''
+    const date = new Date(dateStr)
+    const now = new Date()
+    const diffDays = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60 * 24))
+
+    if (diffDays === 0) {
+      return date.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' })
+    } else if (diffDays === 1) {
+      return t('chatListItem.yesterday')
+    } else if (diffDays < 7) {
+      return date.toLocaleDateString(locale, { weekday: 'short' })
+    }
+    return date.toLocaleDateString(locale, { month: 'short', day: 'numeric' })
+  }
+
   const otherMembers = conversation.members.filter(m => m.user_id !== session?.user.id)
   const displayName = conversation.type === 'group'
-    ? conversation.name || 'Grup'
-    : otherMembers[0]?.display_name || 'Bilinmeyen'
+    ? conversation.name || t('chatListItem.group')
+    : otherMembers[0]?.display_name || t('chatListItem.unknown')
   const avatarUrl = conversation.type === 'group'
     ? conversation.avatar_url
     : otherMembers[0]?.avatar_url
@@ -63,13 +67,13 @@ export default function ChatListItem({ conversation }: ChatListItemProps) {
           <div className="flex items-center justify-between mt-0.5">
             <p className="text-sm text-text-muted truncate">
               {conversation.last_message_type === 'image'
-                ? '\uD83D\uDCF7 Fotograf'
+                ? `\uD83D\uDCF7 ${t('chatListItem.photo')}`
                 : conversation.last_message_type === 'file'
                   ? (() => {
                       const fc = parseFileContent(conversation.last_message_content || '')
-                      return `\uD83D\uDCCE ${fc?.name || 'Dosya'}`
+                      return `\uD83D\uDCCE ${fc?.name || t('chatListItem.file')}`
                     })()
-                  : conversation.last_message_content || 'Henuz mesaj yok'}
+                  : conversation.last_message_content || t('chatListItem.noMessages')}
             </p>
             {conversation.unread_count > 0 && (
               <span className="ml-2 shrink-0 bg-whatsapp-green text-[#06110d] text-[11px] font-bold rounded-full min-w-5 h-5 px-1.5 flex items-center justify-center mono-ui">

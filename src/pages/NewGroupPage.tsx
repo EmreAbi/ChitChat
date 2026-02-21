@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../contexts/AuthContext'
+import { useT } from '../contexts/LanguageContext'
 import Avatar from '../components/common/Avatar'
 import LoadingSpinner from '../components/common/LoadingSpinner'
 import type { Profile } from '../lib/types'
@@ -9,6 +10,7 @@ import type { Profile } from '../lib/types'
 export default function NewGroupPage() {
   const navigate = useNavigate()
   const { session } = useAuth()
+  const { t } = useT()
   const [step, setStep] = useState<'members' | 'details'>('members')
   const [users, setUsers] = useState<Profile[]>([])
   const [selected, setSelected] = useState<Set<string>>(new Set())
@@ -102,15 +104,15 @@ export default function NewGroupPage() {
             </svg>
           </button>
           <div>
-            <h2 className="font-semibold">Team Channel</h2>
-            <p className="text-xs text-text-muted mono-ui">configure members</p>
+            <h2 className="font-semibold">{t('newGroup.title')}</h2>
+            <p className="text-xs text-text-muted mono-ui">{t('newGroup.configureMembers')}</p>
           </div>
         </header>
 
         <div className="p-4 space-y-4">
           <input
             type="text"
-            placeholder="Grup adi"
+            placeholder={t('newGroup.groupNamePlaceholder')}
             value={groupName}
             onChange={e => setGroupName(e.target.value)}
             className="w-full px-4 py-3 rounded-xl border border-stroke-soft bg-[#13261d] text-text-primary focus:border-whatsapp-teal focus:ring-2 focus:ring-whatsapp-teal/20 outline-none text-sm"
@@ -118,7 +120,7 @@ export default function NewGroupPage() {
           />
 
           <div>
-            <p className="text-sm text-text-muted mb-2">Uyeler: {selectedUsers.length}</p>
+            <p className="text-sm text-text-muted mb-2">{t('newGroup.members')} {selectedUsers.length}</p>
             <div className="flex flex-wrap gap-2">
               {selectedUsers.map(u => (
                 <div key={u.id} className="flex items-center gap-1.5 bg-[#13261d] border border-stroke-soft rounded-full pl-1 pr-3 py-1">
@@ -136,7 +138,7 @@ export default function NewGroupPage() {
             disabled={!groupName.trim() || creating}
             className="w-full py-3 bg-whatsapp-green text-[#06110d] rounded-xl font-semibold hover:bg-[#72ffb4] transition-colors disabled:opacity-50"
           >
-            {creating ? 'Olusturuluyor...' : 'Grup Olustur'}
+            {creating ? t('newGroup.creating') : t('newGroup.create')}
           </button>
         </div>
       </div>
@@ -152,8 +154,8 @@ export default function NewGroupPage() {
           </svg>
         </button>
         <div>
-          <h2 className="font-semibold">Team Channel</h2>
-          <p className="text-xs text-text-muted mono-ui">select members</p>
+          <h2 className="font-semibold">{t('newGroup.title')}</h2>
+          <p className="text-xs text-text-muted mono-ui">{t('newGroup.selectMembers')}</p>
         </div>
       </header>
 
@@ -179,7 +181,7 @@ export default function NewGroupPage() {
       <div className="px-3 py-2">
         <input
           type="text"
-          placeholder="Kisi ara..."
+          placeholder={t('newGroup.searchPlaceholder')}
           value={search}
           onChange={e => setSearch(e.target.value)}
           className="w-full px-4 py-2.5 text-sm bg-[#13261d] text-text-primary rounded-xl border border-stroke-soft outline-none focus:bg-[#172e24] focus:border-whatsapp-teal/30 focus:ring-2 focus:ring-whatsapp-teal/20 transition"
@@ -220,7 +222,7 @@ export default function NewGroupPage() {
             onClick={() => setStep('details')}
             className="w-full py-3 bg-whatsapp-green text-[#06110d] rounded-xl font-semibold hover:bg-[#72ffb4] transition-colors"
           >
-            Ileri ({selected.size} secili)
+            {t('newGroup.next')} ({selected.size} {t('newGroup.selected')})
           </button>
         </div>
       )}

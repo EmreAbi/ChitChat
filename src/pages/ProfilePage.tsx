@@ -2,11 +2,13 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../contexts/AuthContext'
+import { useT } from '../contexts/LanguageContext'
 import Avatar from '../components/common/Avatar'
 
 export default function ProfilePage() {
   const navigate = useNavigate()
   const { profile, signOut } = useAuth()
+  const { lang, setLang, t } = useT()
   const [displayName, setDisplayName] = useState(profile?.display_name ?? '')
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
@@ -33,7 +35,7 @@ export default function ProfilePage() {
             <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
           </svg>
         </button>
-        <h2 className="font-semibold">Profil</h2>
+        <h2 className="font-semibold">{t('profile.title')}</h2>
       </header>
 
       <div className="flex flex-col items-center p-8 border-b border-stroke-soft/80">
@@ -43,7 +45,7 @@ export default function ProfilePage() {
 
       <div className="px-6 py-5 space-y-4">
         <div>
-          <label className="text-sm text-text-muted mb-1 block mono-ui">DISPLAY NAME</label>
+          <label className="text-sm text-text-muted mb-1 block mono-ui">{t('profile.displayName')}</label>
           <input
             type="text"
             value={displayName}
@@ -52,19 +54,31 @@ export default function ProfilePage() {
           />
         </div>
 
+        <div>
+          <label className="text-sm text-text-muted mb-1 block mono-ui">{t('profile.language')}</label>
+          <select
+            value={lang}
+            onChange={e => setLang(e.target.value as 'en' | 'tr')}
+            className="w-full px-4 py-3 rounded-xl border border-stroke-soft bg-[#13261d] text-text-primary focus:border-whatsapp-teal focus:ring-2 focus:ring-whatsapp-teal/20 outline-none text-sm transition appearance-none cursor-pointer"
+          >
+            <option value="en">English</option>
+            <option value="tr">Turkish</option>
+          </select>
+        </div>
+
         <button
           onClick={handleSave}
           disabled={saving || !displayName.trim()}
           className="w-full py-3 bg-whatsapp-green text-[#06110d] rounded-xl font-semibold hover:bg-[#72ffb4] transition-colors disabled:opacity-50"
         >
-          {saving ? 'Kaydediliyor...' : saved ? 'Kaydedildi!' : 'Degisiklikleri Kaydet'}
+          {saving ? t('profile.saving') : saved ? t('profile.saved') : t('profile.saveChanges')}
         </button>
 
         <button
           onClick={signOut}
           className="w-full py-3 bg-red-500 text-white rounded-xl font-semibold hover:bg-red-600 transition-colors"
         >
-          Cikis Yap
+          {t('profile.signOut')}
         </button>
       </div>
     </div>
