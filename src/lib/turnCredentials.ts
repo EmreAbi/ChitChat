@@ -2,12 +2,12 @@ import { supabase } from './supabase'
 
 export async function getTurnCredentials(): Promise<RTCIceServer[]> {
   try {
-    const { data: { session } } = await supabase.auth.getSession()
-    if (!session) throw new Error('Not authenticated')
+    // Force token refresh by validating with the server
+    const { data: { user }, error: userError } = await supabase.auth.getUser()
+    if (userError || !user) throw new Error('Not authenticated')
 
-    const { data, error } = await supabase.functions.invoke('turn-credentials', {
-      headers: { Authorization: `Bearer ${session.access_token}` },
-    })
+    // supabase.functions.invoke automatically attaches the refreshed JWT
+    const { data, error } = await supabase.functions.invoke('turn-credentials')
 
     console.log('[TURN] Edge function response:', JSON.stringify(data), 'error:', error)
 
