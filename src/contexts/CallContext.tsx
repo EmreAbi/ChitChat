@@ -592,7 +592,7 @@ export function CallProvider({ children }: { children: ReactNode }) {
     if (!session?.user?.id || callStateRef.current.status !== 'idle') return
     voiceEffectRef.current = voiceEffect
 
-    const isGroup = groupMembers && groupMembers.length > 1
+    const isGroup = !!groupMembers && groupMembers.length > 0
     const allMembers = groupMembers || (remoteUser ? [remoteUser] : [])
 
     // Enforce max participants
