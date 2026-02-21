@@ -6,8 +6,13 @@ export async function getTurnCredentials(): Promise<RTCIceServer[]> {
     const { data: { user }, error: userError } = await supabase.auth.getUser()
     if (userError || !user) throw new Error('Not authenticated')
 
-    // supabase.functions.invoke automatically attaches the refreshed JWT
-    const { data, error } = await supabase.functions.invoke('turn-credentials')
+    // Get the refreshed session token after getUser() refresh
+    const { data: { session } } = await supabase.auth.getSession()
+    if (!session) throw new Error('No session')
+
+    const { data, error } = await supabase.functions.invoke('turn-credentials', {
+      headers: { Authorization: `Bearer ${session.access_token}` },
+    })
 
     console.log('[TURN] Edge function response:', JSON.stringify(data), 'error:', error)
 
