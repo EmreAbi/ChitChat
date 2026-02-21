@@ -72,13 +72,13 @@ export default function MessageInput({ onSend, onTyping, onStopTyping, onFileSel
   }
 
   return (
-    <div className="shrink-0 flex items-end gap-2 p-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] bg-white/90 border-t border-stroke-soft backdrop-blur-sm">
+    <div className="shrink-0 flex items-end gap-2 p-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] bg-header-bg border-t border-stroke-soft backdrop-blur-sm">
       {onFileSelect && (
         <>
           <button
             onClick={() => fileInputRef.current?.click()}
             disabled={uploading}
-            className="shrink-0 w-10 h-10 rounded-2xl flex items-center justify-center text-gray-500 hover:text-whatsapp-teal hover:bg-gray-100 active:bg-gray-200 transition-colors disabled:opacity-40"
+            className="shrink-0 w-10 h-10 rounded-2xl flex items-center justify-center text-text-muted hover:text-whatsapp-green hover:bg-whatsapp-green/10 active:bg-whatsapp-green/20 transition-colors disabled:opacity-40"
             aria-label="Dosya ekle"
           >
             {uploading ? (
@@ -106,15 +106,15 @@ export default function MessageInput({ onSend, onTyping, onStopTyping, onFileSel
         value={text}
         onChange={e => handleChange(e.target.value)}
         onKeyDown={handleKeyDown}
-        placeholder="Mesaj yaz"
+        placeholder="Write encrypted message..."
         rows={1}
-        className="flex-1 min-w-0 resize-none rounded-2xl border border-gray-300 bg-white px-3 py-2.5 text-base outline-none focus:border-whatsapp-teal focus:ring-2 focus:ring-whatsapp-teal/20 transition max-h-[120px]"
+        className="flex-1 min-w-0 resize-none rounded-2xl border border-stroke-soft bg-[#13271e] px-3 py-2.5 text-base text-text-primary outline-none focus:border-whatsapp-teal focus:ring-2 focus:ring-whatsapp-teal/20 transition max-h-[120px]"
         aria-label="Mesaj"
       />
       <button
         onClick={handleSend}
         disabled={!text.trim()}
-        className="shrink-0 w-10 h-10 rounded-2xl bg-whatsapp-teal flex items-center justify-center text-white active:bg-whatsapp-dark transition-colors disabled:opacity-40 shadow-sm"
+        className="shrink-0 w-10 h-10 rounded-2xl bg-whatsapp-green flex items-center justify-center text-[#06110d] active:bg-[#29d883] transition-colors disabled:opacity-40 shadow-sm"
         aria-label="Mesaji gonder"
       >
         <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">

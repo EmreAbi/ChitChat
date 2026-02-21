@@ -27,8 +27,8 @@ export default function Avatar({ name, avatarUrl, size = 'md', online }: AvatarP
 
   const colorIndex = name.split('').reduce((acc, c) => acc + c.charCodeAt(0), 0) % 6
   const colors = [
-    'bg-emerald-500', 'bg-blue-500', 'bg-purple-500',
-    'bg-pink-500', 'bg-amber-500', 'bg-cyan-500',
+    'bg-[#1b4e36]', 'bg-[#1e4360]', 'bg-[#2b3f63]',
+    'bg-[#324a34]', 'bg-[#335147]', 'bg-[#253f44]',
   ]
 
   return (
@@ -37,16 +37,16 @@ export default function Avatar({ name, avatarUrl, size = 'md', online }: AvatarP
         <img
           src={avatarUrl}
           alt={name}
-          className={`${sizeClasses[size]} rounded-full object-cover`}
+          className={`${sizeClasses[size]} rounded-full object-cover ring-1 ring-stroke-soft`}
         />
       ) : (
-        <div className={`${sizeClasses[size]} ${colors[colorIndex]} rounded-full flex items-center justify-center text-white font-semibold`}>
+        <div className={`${sizeClasses[size]} ${colors[colorIndex]} rounded-full ring-1 ring-stroke-soft flex items-center justify-center text-[#dbffe9] font-semibold`}>
           {initials}
         </div>
       )}
       {online !== undefined && (
         <span
-          className={`absolute bottom-0 right-0 ${dotSizeClasses[size]} rounded-full border-2 border-white ${online ? 'bg-whatsapp-green' : 'bg-gray-400'}`}
+          className={`absolute bottom-0 right-0 ${dotSizeClasses[size]} rounded-full border-2 border-[#0d1f17] ${online ? 'bg-whatsapp-green' : 'bg-text-muted'}`}
         />
       )}
     </div>

@@ -1,24 +1,24 @@
 @import "tailwindcss";
 
 @theme {
-  --color-whatsapp-green: #25D366;
-  --color-whatsapp-dark: #075E54;
-  --color-whatsapp-teal: #128C7E;
-  --color-whatsapp-light: #DCF8C6;
-  --color-whatsapp-blue: #34B7F1;
-  --color-chat-bg: #ECE5DD;
-  --color-bubble-out: #DCF8C6;
-  --color-bubble-in: #FFFFFF;
-  --color-header-bg: #075E54;
-  --color-header-text: #FFFFFF;
-  --color-unread-badge: #25D366;
-  --color-tick-blue: #53BDEB;
-  --color-typing-dots: #075E54;
-  --color-surface: #F6FBF9;
-  --color-surface-elevated: #FFFFFF;
-  --color-stroke-soft: #D9ECE7;
-  --color-text-primary: #0F2A26;
-  --color-text-muted: #66817A;
+  --color-whatsapp-green: #41f39a;
+  --color-whatsapp-dark: #07120f;
+  --color-whatsapp-teal: #1fd07a;
+  --color-whatsapp-light: #17382a;
+  --color-whatsapp-blue: #6ed6ff;
+  --color-chat-bg: #08120d;
+  --color-bubble-out: #1b3f2d;
+  --color-bubble-in: #11261c;
+  --color-header-bg: #0d1f17;
+  --color-header-text: #d9fbe8;
+  --color-unread-badge: #41f39a;
+  --color-tick-blue: #6effb6;
+  --color-typing-dots: #41f39a;
+  --color-surface: #08120d;
+  --color-surface-elevated: #0e1c15;
+  --color-stroke-soft: #1d3529;
+  --color-text-primary: #d6fbe8;
+  --color-text-muted: #7ea894;
 }
 
 html, body, #root {
@@ -30,11 +30,11 @@ html, body, #root {
 }
 
 body {
-  font-family: "Avenir Next", "SF Pro Text", "Segoe UI", "Helvetica Neue", sans-serif;
+  font-family: "IBM Plex Sans", "SF Pro Text", "Segoe UI", sans-serif;
   background:
-    radial-gradient(circle at 15% 10%, rgba(37, 211, 102, 0.2), transparent 35%),
-    radial-gradient(circle at 85% 95%, rgba(18, 140, 126, 0.18), transparent 30%),
-    linear-gradient(180deg, #f4fffb 0%, #eaf6f2 45%, #e3f1ed 100%);
+    radial-gradient(circle at 16% 8%, rgba(65, 243, 154, 0.12), transparent 34%),
+    radial-gradient(circle at 84% 94%, rgba(35, 188, 113, 0.1), transparent 30%),
+    linear-gradient(180deg, #070f0d 0%, #08130f 45%, #07100d 100%);
   color: var(--color-text-primary);
   padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
 }
@@ -66,13 +66,17 @@ textarea:focus-visible,
   width: 6px;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 0, 0.2);
+  background: rgba(65, 243, 154, 0.28);
   border-radius: 3px;
 }
 
 .chat-bg {
   background-color: var(--color-chat-bg);
-  background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23000000' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  background-image:
+    linear-gradient(rgba(65, 243, 154, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(65, 243, 154, 0.035) 1px, transparent 1px),
+    radial-gradient(circle at 70% 8%, rgba(65, 243, 154, 0.08), transparent 28%);
+  background-size: 28px 28px, 28px 28px, auto;
 }
 
 .bubble-tail-out::before {
@@ -99,13 +103,13 @@ textarea:focus-visible,
 
 @keyframes pulse-ring {
   0% {
-    box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.6);
+    box-shadow: 0 0 0 0 rgba(65, 243, 154, 0.55);
   }
   70% {
-    box-shadow: 0 0 0 16px rgba(37, 211, 102, 0);
+    box-shadow: 0 0 0 16px rgba(65, 243, 154, 0);
   }
   100% {
-    box-shadow: 0 0 0 0 rgba(37, 211, 102, 0);
+    box-shadow: 0 0 0 0 rgba(65, 243, 154, 0);
   }
 }
 
@@ -126,4 +130,8 @@ textarea:focus-visible,
 
 .animate-fade-up {
   animation: fade-up 240ms ease-out;
+}
+
+.mono-ui {
+  font-family: "JetBrains Mono", "IBM Plex Mono", "Menlo", monospace;
 }

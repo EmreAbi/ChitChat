@@ -47,21 +47,21 @@ export default function ChatListItem({ conversation }: ChatListItemProps) {
     <button
       onClick={() => navigate(`/chat/${conversation.id}`)}
       className={`group relative w-full text-left transition-colors ${
-        isActive ? 'bg-emerald-50/80' : 'hover:bg-gray-50 active:bg-gray-100'
+        isActive ? 'bg-[#172f24]' : 'hover:bg-[#13271e] active:bg-[#102219]'
       }`}
     >
-      <span className={`absolute inset-y-2 left-1 w-1 rounded-full bg-whatsapp-teal transition-opacity ${isActive ? 'opacity-100' : 'opacity-0 group-hover:opacity-50'}`} />
+      <span className={`absolute inset-y-2 left-1 w-1 rounded-full bg-whatsapp-green transition-opacity ${isActive ? 'opacity-100' : 'opacity-0 group-hover:opacity-50'}`} />
       <div className="flex items-center gap-3 px-4 py-3">
         <Avatar name={displayName} avatarUrl={avatarUrl} online={online} />
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between">
-            <span className="font-semibold text-gray-900 truncate">{displayName}</span>
-            <span className={`text-xs shrink-0 ml-2 ${conversation.unread_count > 0 ? 'text-whatsapp-green font-semibold' : 'text-gray-500'}`}>
+            <span className="font-semibold text-text-primary truncate">{displayName}</span>
+            <span className={`text-xs shrink-0 ml-2 ${conversation.unread_count > 0 ? 'text-whatsapp-green font-semibold mono-ui' : 'text-text-muted mono-ui'}`}>
               {formatTime(conversation.last_message_at)}
             </span>
           </div>
           <div className="flex items-center justify-between mt-0.5">
-            <p className="text-sm text-gray-500 truncate">
+            <p className="text-sm text-text-muted truncate">
               {conversation.last_message_type === 'image'
                 ? '\uD83D\uDCF7 Fotograf'
                 : conversation.last_message_type === 'file'
@@ -72,7 +72,7 @@ export default function ChatListItem({ conversation }: ChatListItemProps) {
                   : conversation.last_message_content || 'Henuz mesaj yok'}
             </p>
             {conversation.unread_count > 0 && (
-              <span className="ml-2 shrink-0 bg-whatsapp-green text-white text-xs font-bold rounded-full min-w-5 h-5 px-1.5 flex items-center justify-center">
+              <span className="ml-2 shrink-0 bg-whatsapp-green text-[#06110d] text-[11px] font-bold rounded-full min-w-5 h-5 px-1.5 flex items-center justify-center mono-ui">
                 {conversation.unread_count > 99 ? '99+' : conversation.unread_count}
               </span>
             )}

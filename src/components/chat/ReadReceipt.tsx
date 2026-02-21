@@ -3,7 +3,7 @@ interface ReadReceiptProps {
 }
 
 export default function ReadReceipt({ status }: ReadReceiptProps) {
-  const color = status === 'read' ? 'text-tick-blue' : 'text-gray-400'
+  const color = status === 'read' ? 'text-tick-blue' : 'text-text-muted'
 
   if (status === 'sent') {
     return (

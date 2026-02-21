@@ -154,7 +154,7 @@ export default function ChatViewPage() {
 
   const displayName = isGroup
     ? conversation?.name || 'Group'
-    : otherMembers[0]?.display_name || 'Sohbet'
+    : otherMembers[0]?.display_name || 'Secure Chat'
 
   let subtitle: string | undefined
   if (isGroup) {
@@ -172,7 +172,7 @@ export default function ChatViewPage() {
   }
 
   return (
-    <div className="flex flex-col h-[100dvh] md:h-full flex-1 bg-white relative">
+    <div className="flex flex-col h-[100dvh] md:h-full flex-1 bg-surface relative">
       <ChatHeader
         name={displayName}
         avatarUrl={isGroup ? conversation?.avatar_url : otherMembers[0]?.avatar_url}
@@ -201,7 +201,7 @@ export default function ChatViewPage() {
                 <div key={msg.id}>
                   {showDaySeparator && (
                     <div className="sticky top-2 z-[1] flex justify-center my-3">
-                      <span className="bg-white/90 border border-gray-200 rounded-full px-3 py-1 text-[11px] font-medium text-gray-500 shadow-sm backdrop-blur-sm">
+                      <span className="bg-[#0f2319]/95 border border-stroke-soft rounded-full px-3 py-1 text-[11px] font-medium text-text-muted shadow-sm backdrop-blur-sm mono-ui">
                         {formatDayLabel(msg.created_at)}
                       </span>
                     </div>
@@ -224,7 +224,7 @@ export default function ChatViewPage() {
       {showScrollBtn && (
         <button
           onClick={() => messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })}
-          className="absolute bottom-20 right-4 w-10 h-10 bg-white border border-gray-200 rounded-xl shadow-lg flex items-center justify-center text-gray-600 hover:bg-gray-50 z-10"
+          className="absolute bottom-20 right-4 w-10 h-10 bg-[#13261d] border border-stroke-soft rounded-xl shadow-lg flex items-center justify-center text-text-primary hover:bg-[#183329] z-10"
           aria-label="En alta git"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">

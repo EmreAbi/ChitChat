@@ -14,10 +14,10 @@ export default function ChatHeader({ name, avatarUrl, subtitle, online, onCall, 
   const navigate = useNavigate()
 
   return (
-    <header className="bg-header-bg text-header-text flex items-center gap-2 px-2 py-2.5 shadow-md z-10">
+    <header className="bg-header-bg text-header-text flex items-center gap-2 px-2 py-2.5 border-b border-stroke-soft shadow-md z-10">
       <button
         onClick={() => navigate('/')}
-        className="p-1 hover:bg-white/10 rounded-full transition-colors md:hidden"
+        className="p-1 hover:bg-whatsapp-green/10 rounded-xl transition-colors md:hidden"
         aria-label="Sohbet listesine don"
       >
         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
@@ -27,12 +27,14 @@ export default function ChatHeader({ name, avatarUrl, subtitle, online, onCall, 
       <Avatar name={name} avatarUrl={avatarUrl} size="sm" online={online} />
       <div className="flex-1 min-w-0">
         <h2 className="font-semibold text-sm truncate tracking-wide">{name}</h2>
-        {subtitle && <p className="text-xs text-white/70 truncate">{subtitle}</p>}
+        <p className="text-[11px] text-text-muted truncate mono-ui">
+          {subtitle || 'secure channel'}
+        </p>
       </div>
       {showCallButton && onCall && (
         <button
           onClick={onCall}
-          className="p-2 hover:bg-white/10 rounded-full transition-colors"
+          className="p-2 hover:bg-whatsapp-green/10 rounded-xl transition-colors"
           title="Sesli arama"
           aria-label="Sesli arama baslat"
         >

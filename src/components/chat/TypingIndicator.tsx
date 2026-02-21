@@ -17,13 +17,13 @@ export default function TypingIndicator({ typingUsers }: TypingIndicatorProps) {
 
   return (
     <div className="px-4 py-1.5">
-      <div className="inline-flex items-center gap-1.5 bg-white/95 border border-gray-200 rounded-full px-3 py-1.5 shadow-sm">
+      <div className="inline-flex items-center gap-1.5 bg-[#0f2319] border border-stroke-soft rounded-full px-3 py-1.5 shadow-sm">
         <div className="flex gap-0.5">
           <span className="w-1.5 h-1.5 bg-typing-dots rounded-full animate-bounce [animation-delay:0ms]" />
           <span className="w-1.5 h-1.5 bg-typing-dots rounded-full animate-bounce [animation-delay:150ms]" />
           <span className="w-1.5 h-1.5 bg-typing-dots rounded-full animate-bounce [animation-delay:300ms]" />
         </div>
-        <span className="text-xs text-whatsapp-teal italic">{text}</span>
+        <span className="text-xs text-whatsapp-green italic">{text}</span>
       </div>
     </div>
   )

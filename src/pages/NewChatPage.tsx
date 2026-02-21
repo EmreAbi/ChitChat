@@ -71,25 +71,25 @@ export default function NewChatPage() {
 
   return (
     <div className="flex flex-col h-full w-full bg-surface-elevated">
-      <header className="bg-header-bg text-header-text flex items-center gap-3 px-2 py-3 shadow-md z-10">
-        <button onClick={() => navigate(-1)} className="p-1 hover:bg-white/10 rounded-full transition-colors">
+      <header className="bg-header-bg text-header-text flex items-center gap-3 px-2 py-3 border-b border-stroke-soft shadow-md z-10">
+        <button onClick={() => navigate(-1)} className="p-1 hover:bg-whatsapp-green/10 rounded-xl transition-colors">
           <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
             <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
           </svg>
         </button>
         <div>
-          <h2 className="font-semibold">Yeni Sohbet</h2>
-          <p className="text-xs text-white/70">{users.length} kisi</p>
+          <h2 className="font-semibold">Direct Channel</h2>
+          <p className="text-xs text-text-muted mono-ui">{users.length} contacts</p>
         </div>
       </header>
 
       <div className="px-3 py-2 border-b border-stroke-soft/70">
         <input
           type="text"
-          placeholder="Kisi ara..."
+          placeholder="Search contacts..."
           value={search}
           onChange={e => setSearch(e.target.value)}
-          className="w-full px-4 py-2.5 text-sm bg-gray-100 rounded-xl border border-transparent outline-none focus:bg-white focus:border-whatsapp-teal/30 focus:ring-2 focus:ring-whatsapp-teal/20 transition"
+          className="w-full px-4 py-2.5 text-sm bg-[#13261d] text-text-primary rounded-xl border border-stroke-soft outline-none focus:bg-[#172e24] focus:border-whatsapp-teal/30 focus:ring-2 focus:ring-whatsapp-teal/20 transition"
         />
       </div>
 
@@ -97,19 +97,19 @@ export default function NewChatPage() {
         {loading ? (
           <LoadingSpinner className="mt-12" />
         ) : filtered.length === 0 ? (
-          <p className="text-center text-gray-500 text-sm mt-8">Kisi bulunamadi</p>
+          <p className="text-center text-text-muted text-sm mt-8">Kisi bulunamadi</p>
         ) : (
           filtered.map(user => (
             <button
               key={user.id}
               onClick={() => startChat(user.id)}
               disabled={creating}
-              className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-50 active:bg-gray-100 transition-colors disabled:opacity-50 text-left"
+              className="w-full flex items-center gap-3 px-4 py-3 hover:bg-[#13271e] active:bg-[#102219] transition-colors disabled:opacity-50 text-left"
             >
               <Avatar name={user.display_name} avatarUrl={user.avatar_url} />
               <div className="text-left min-w-0">
-                <p className="font-semibold text-gray-900 truncate">{user.display_name}</p>
-                <p className="text-sm text-gray-500 truncate">{user.email}</p>
+                <p className="font-semibold text-text-primary truncate">{user.display_name}</p>
+                <p className="text-sm text-text-muted truncate">{user.email}</p>
               </div>
             </button>
           ))

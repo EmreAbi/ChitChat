@@ -8,7 +8,7 @@ export default function IncomingCallModal() {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
-      <div className="bg-white rounded-3xl border border-white/60 shadow-2xl p-8 mx-4 max-w-sm w-full text-center">
+      <div className="bg-[#0f1f18] rounded-3xl border border-stroke-soft shadow-2xl p-8 mx-4 max-w-sm w-full text-center">
         {/* Pulsing avatar */}
         <div className="flex justify-center mb-4">
           <div className="animate-pulse-ring rounded-full p-1">
@@ -20,10 +20,10 @@ export default function IncomingCallModal() {
           </div>
         </div>
 
-        <h3 className="text-lg font-semibold text-gray-900 mb-1">
+        <h3 className="text-lg font-semibold text-text-primary mb-1">
           {callState.remoteUser.displayName}
         </h3>
-        <p className="text-sm text-gray-500 mb-8">Sesli arama geliyor...</p>
+        <p className="text-sm text-text-muted mb-8">Sesli arama geliyor...</p>
 
         {/* Accept / Reject buttons */}
         <div className="flex justify-center gap-12">
