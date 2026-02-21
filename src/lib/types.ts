@@ -260,6 +260,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      add_room_member: {
+        Args: { p_conversation_id: string; p_user_id: string }
+        Returns: undefined
+      }
       find_direct_conversation: {
         Args: { p_other_user_id: string }
         Returns: string
@@ -283,6 +287,10 @@ export type Database = {
       }
       mark_messages_read: {
         Args: { p_conversation_id: string }
+        Returns: undefined
+      }
+      remove_room_member: {
+        Args: { p_conversation_id: string; p_user_id: string }
         Returns: undefined
       }
     }
