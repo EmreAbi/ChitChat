@@ -8,7 +8,7 @@ import { useCall } from '../contexts/CallContext'
 import { useMessages } from '../hooks/useMessages'
 import { useTypingIndicator } from '../hooks/useTypingIndicator'
 import { useFileUpload } from '../hooks/useFileUpload'
-import { getStoredVoiceEffect } from '../lib/voiceEffects'
+import { VOICE_EFFECTS, getStoredVoiceEffect, setStoredVoiceEffect, type VoiceEffect } from '../lib/voiceEffects'
 import ChatHeader from '../components/chat/ChatHeader'
 import MessageBubble from '../components/chat/MessageBubble'
 import MessageInput from '../components/chat/MessageInput'
@@ -39,6 +39,8 @@ export default function ChatViewPage() {
   const hasInitialScroll = useRef(false)
   const [showScrollBtn, setShowScrollBtn] = useState(false)
   const [readReceipts, setReadReceipts] = useState<Set<string>>(new Set())
+  const [showCallModal, setShowCallModal] = useState(false)
+  const [selectedEffect, setSelectedEffect] = useState<VoiceEffect>(getStoredVoiceEffect)
 
   function formatDayLabel(dateStr: string): string {
     const date = new Date(dateStr)
@@ -144,15 +146,21 @@ export default function ChatViewPage() {
   const otherMembers = conversation?.members.filter(m => m.user_id !== session?.user.id) ?? []
   const isGroup = conversation?.type === 'group'
 
-  function handleCall() {
+  function handleCallClick() {
+    setSelectedEffect(getStoredVoiceEffect())
+    setShowCallModal(true)
+  }
+
+  function handleCallStart() {
     if (!id || !otherMembers[0]) return
     const member = otherMembers[0]
-    const effect = getStoredVoiceEffect()
+    setStoredVoiceEffect(selectedEffect)
+    setShowCallModal(false)
     startCall(id, {
       id: member.user_id,
       displayName: member.display_name,
       avatarUrl: member.avatar_url,
-    }, effect)
+    }, selectedEffect)
   }
 
   if (!id) return null
@@ -184,7 +192,7 @@ export default function ChatViewPage() {
         subtitle={subtitle}
         online={!isGroup && otherMembers[0] ? isOnline(otherMembers[0].user_id) : undefined}
         showCallButton={!isGroup}
-        onCall={handleCall}
+        onCall={handleCallClick}
       />
 
       <div
@@ -246,6 +254,40 @@ export default function ChatViewPage() {
         uploading={uploading}
       />
 
+      {/* Voice effect picker modal */}
+      {showCallModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm" onClick={() => setShowCallModal(false)}>
+          <div className="bg-[#0f1f18] rounded-3xl border border-stroke-soft shadow-2xl p-6 mx-4 max-w-sm w-full" onClick={e => e.stopPropagation()}>
+            <h3 className="text-sm font-semibold text-text-primary mb-4 text-center mono-ui">{t('voiceEffect.selectTitle')}</h3>
+            <div className="grid grid-cols-2 gap-2 mb-5">
+              {VOICE_EFFECTS.map(ve => (
+                <button
+                  key={ve.id}
+                  type="button"
+                  onClick={() => setSelectedEffect(ve.id)}
+                  className={`px-3 py-2.5 rounded-xl text-sm font-medium transition-colors border ${
+                    selectedEffect === ve.id
+                      ? 'bg-whatsapp-teal/20 border-whatsapp-green text-whatsapp-green'
+                      : 'bg-[#13261d] border-stroke-soft text-text-muted hover:bg-[#183329]'
+                  }`}
+                >
+                  {t(ve.labelKey)}
+                </button>
+              ))}
+            </div>
+            <button
+              type="button"
+              onClick={handleCallStart}
+              className="w-full py-3 rounded-xl bg-green-500 hover:bg-green-600 text-white font-semibold text-sm transition-colors flex items-center justify-center gap-2"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+              </svg>
+              {t('voiceEffect.call')}
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

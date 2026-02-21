@@ -77,7 +77,7 @@ interface CallContextType {
   callState: CallState
   voiceEffect: VoiceEffect
   startCall: (conversationId: string, remoteUser: CallState['remoteUser'], voiceEffect?: VoiceEffect) => Promise<void>
-  acceptCall: () => void
+  acceptCall: (effect?: VoiceEffect) => void
   rejectCall: () => void
   endCall: () => void
   toggleMute: () => void
@@ -434,9 +434,12 @@ export function CallProvider({ children }: { children: ReactNode }) {
 
   // --- Accept call (callee side) ---
 
-  const acceptCall = useCallback(async () => {
+  const acceptCall = useCallback(async (effect?: VoiceEffect) => {
     const state = callStateRef.current
     if (state.status !== 'incoming_ringing' || !state.remoteUser || !state.callLogId) return
+
+    const selectedEffect = effect || getStoredVoiceEffect()
+    voiceEffectRef.current = selectedEffect
 
     stopAllTones()
     if (ringTimeout.current) {
@@ -462,7 +465,7 @@ export function CallProvider({ children }: { children: ReactNode }) {
     })
 
     // Create peer connection and join session channel
-    await createPeerConnection(state.callLogId)
+    await createPeerConnection(state.callLogId, selectedEffect)
     joinSessionChannel(state.callLogId, false)
   }, [createPeerConnection, joinSessionChannel])
 

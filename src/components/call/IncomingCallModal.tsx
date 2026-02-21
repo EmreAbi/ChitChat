@@ -1,12 +1,20 @@
+import { useState } from 'react'
 import { useCall } from '../../contexts/CallContext'
 import { useT } from '../../contexts/LanguageContext'
+import { VOICE_EFFECTS, getStoredVoiceEffect, setStoredVoiceEffect, type VoiceEffect } from '../../lib/voiceEffects'
 import Avatar from '../common/Avatar'
 
 export default function IncomingCallModal() {
   const { callState, acceptCall, rejectCall } = useCall()
   const { t } = useT()
+  const [selectedEffect, setSelectedEffect] = useState<VoiceEffect>(getStoredVoiceEffect)
 
   if (callState.status !== 'incoming_ringing' || !callState.remoteUser) return null
+
+  function handleAccept() {
+    setStoredVoiceEffect(selectedEffect)
+    acceptCall(selectedEffect)
+  }
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
@@ -25,7 +33,28 @@ export default function IncomingCallModal() {
         <h3 className="text-lg font-semibold text-text-primary mb-1">
           {callState.remoteUser.displayName}
         </h3>
-        <p className="text-sm text-text-muted mb-8">{t('call.incoming')}</p>
+        <p className="text-sm text-text-muted mb-5">{t('call.incoming')}</p>
+
+        {/* Voice effect selector */}
+        <div className="mb-6">
+          <p className="text-xs text-text-muted mb-2 mono-ui">{t('voiceEffect.selectTitle')}</p>
+          <div className="grid grid-cols-2 gap-2">
+            {VOICE_EFFECTS.map(ve => (
+              <button
+                key={ve.id}
+                type="button"
+                onClick={() => setSelectedEffect(ve.id)}
+                className={`px-3 py-2 rounded-xl text-sm font-medium transition-colors border ${
+                  selectedEffect === ve.id
+                    ? 'bg-whatsapp-teal/20 border-whatsapp-green text-whatsapp-green'
+                    : 'bg-[#13261d] border-stroke-soft text-text-muted hover:bg-[#183329]'
+                }`}
+              >
+                {t(ve.labelKey)}
+              </button>
+            ))}
+          </div>
+        </div>
 
         {/* Accept / Reject buttons */}
         <div className="flex justify-center gap-12">
@@ -42,7 +71,7 @@ export default function IncomingCallModal() {
 
           {/* Accept */}
           <button
-            onClick={acceptCall}
+            onClick={handleAccept}
             className="w-14 h-14 rounded-full bg-green-500 hover:bg-green-600 flex items-center justify-center text-white shadow-lg transition-colors"
             aria-label={t('call.acceptAria')}
           >

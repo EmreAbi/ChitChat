@@ -129,6 +129,8 @@ const translations: Record<Lang, Record<string, string>> = {
     'voiceEffect.shadow': 'Shadow',
     'voiceEffect.phantom': 'Phantom',
     'voiceEffect.cyber': 'Cyber',
+    'voiceEffect.selectTitle': 'Select Voice Effect',
+    'voiceEffect.call': 'Call',
 
     // App Layout
     'layout.emptyTitle': 'ESA Internal Grid',
@@ -262,6 +264,8 @@ const translations: Record<Lang, Record<string, string>> = {
     'voiceEffect.shadow': 'Golge',
     'voiceEffect.phantom': 'Hayalet',
     'voiceEffect.cyber': 'Siber',
+    'voiceEffect.selectTitle': 'Ses Efekti Sec',
+    'voiceEffect.call': 'Ara',
 
     // App Layout
     'layout.emptyTitle': 'ESA Internal Grid',
