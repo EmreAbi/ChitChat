@@ -39,7 +39,6 @@ export default function ChatViewPage() {
   const hasInitialScroll = useRef(false)
   const [showScrollBtn, setShowScrollBtn] = useState(false)
   const [readReceipts, setReadReceipts] = useState<Set<string>>(new Set())
-  const [showCallModal, setShowCallModal] = useState(false)
 
   function formatDayLabel(dateStr: string): string {
     const date = new Date(dateStr)
@@ -147,14 +146,8 @@ export default function ChatViewPage() {
 
   function handleCall() {
     if (!id || !otherMembers[0]) return
-    setShowCallModal(true)
-  }
-
-  function handleCallWithEffect(useEffect: boolean) {
-    setShowCallModal(false)
-    if (!id || !otherMembers[0]) return
     const member = otherMembers[0]
-    const effect = useEffect ? getStoredVoiceEffect() : 'none'
+    const effect = getStoredVoiceEffect()
     startCall(id, {
       id: member.user_id,
       displayName: member.display_name,
@@ -253,33 +246,6 @@ export default function ChatViewPage() {
         uploading={uploading}
       />
 
-      {showCallModal && (
-        <div className="absolute inset-0 bg-black/60 flex items-center justify-center z-50">
-          <div className="bg-[#13261d] border border-stroke-soft rounded-2xl p-6 mx-4 w-full max-w-xs shadow-xl">
-            <h3 className="text-text-primary font-semibold text-center mb-5">{t('call.modalTitle')}</h3>
-            <div className="space-y-3">
-              <button
-                onClick={() => handleCallWithEffect(false)}
-                className="w-full py-3 bg-whatsapp-green text-[#06110d] rounded-xl font-semibold hover:bg-[#72ffb4] transition-colors"
-              >
-                {t('call.normalCall')}
-              </button>
-              <button
-                onClick={() => handleCallWithEffect(true)}
-                className="w-full py-3 bg-[#1a3a2a] border border-whatsapp-green/30 text-whatsapp-green rounded-xl font-semibold hover:bg-[#1f4432] transition-colors"
-              >
-                {t('call.modifiedCall')}
-              </button>
-              <button
-                onClick={() => setShowCallModal(false)}
-                className="w-full py-3 text-text-muted rounded-xl font-medium hover:bg-[#1a3a2a] transition-colors"
-              >
-                {t('call.cancel')}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   )
 }

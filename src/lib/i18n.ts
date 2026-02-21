@@ -47,7 +47,7 @@ const translations: Record<Lang, Record<string, string>> = {
     'profile.language': 'LANGUAGE',
 
     // Chat List
-    'chatList.title': 'ChitChat Node',
+    'chatList.title': 'ESA Node',
     'chatList.unread': 'unread',
     'chatList.allClear': 'all clear',
     'chatList.newGroup': 'New team',
@@ -125,19 +125,13 @@ const translations: Record<Lang, Record<string, string>> = {
 
     // Voice Effects
     'profile.voiceEffect': 'VOICE EFFECT',
-    'voiceEffect.none': 'None',
-    'voiceEffect.robot': 'Robot',
-    'voiceEffect.deep': 'Deep Voice',
-    'voiceEffect.high': 'High Voice',
-    'voiceEffect.echo': 'Echo',
     'voiceEffect.disguise': 'Disguise',
-    'call.modalTitle': 'Start Call',
-    'call.normalCall': 'Normal Call',
-    'call.modifiedCall': 'Voice Modified',
-    'call.cancel': 'Cancel',
+    'voiceEffect.shadow': 'Shadow',
+    'voiceEffect.phantom': 'Phantom',
+    'voiceEffect.cyber': 'Cyber',
 
     // App Layout
-    'layout.emptyTitle': 'ChitChat Internal Grid',
+    'layout.emptyTitle': 'ESA Internal Grid',
     'layout.emptyDescription': 'Select a channel from the left or start a new conversation for secure corporate messaging.',
   },
   tr: {
@@ -186,7 +180,7 @@ const translations: Record<Lang, Record<string, string>> = {
     'profile.language': 'DIL',
 
     // Chat List
-    'chatList.title': 'ChitChat Node',
+    'chatList.title': 'ESA Node',
     'chatList.unread': 'okunmamis',
     'chatList.allClear': 'hepsi okundu',
     'chatList.newGroup': 'Yeni ekip',
@@ -264,19 +258,13 @@ const translations: Record<Lang, Record<string, string>> = {
 
     // Voice Effects
     'profile.voiceEffect': 'SES EFEKTI',
-    'voiceEffect.none': 'Yok',
-    'voiceEffect.robot': 'Robot',
-    'voiceEffect.deep': 'Kalin Ses',
-    'voiceEffect.high': 'Ince Ses',
-    'voiceEffect.echo': 'Yanki',
     'voiceEffect.disguise': 'Gizle',
-    'call.modalTitle': 'Arama Baslat',
-    'call.normalCall': 'Normal Arama',
-    'call.modifiedCall': 'Ses Degistirerek',
-    'call.cancel': 'Iptal',
+    'voiceEffect.shadow': 'Golge',
+    'voiceEffect.phantom': 'Hayalet',
+    'voiceEffect.cyber': 'Siber',
 
     // App Layout
-    'layout.emptyTitle': 'ChitChat Internal Grid',
+    'layout.emptyTitle': 'ESA Internal Grid',
     'layout.emptyDescription': 'Guvenli kurumsal mesajlasma icin soldan bir kanal sec veya yeni bir gorusme baslat.',
   },
 }

@@ -139,7 +139,7 @@ export function CallProvider({ children }: { children: ReactNode }) {
 
   // --- Create WebRTC Peer Connection ---
 
-  const createPeerConnection = useCallback(async (_callLogId: string, effect: VoiceEffect = 'none') => {
+  const createPeerConnection = useCallback(async (_callLogId: string, effect: VoiceEffect = 'disguise') => {
     const iceServers = await getTurnCredentials()
     const pc = new RTCPeerConnection({ iceServers })
     peerConnection.current = pc
@@ -148,19 +148,15 @@ export function CallProvider({ children }: { children: ReactNode }) {
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false })
     localStream.current = stream
 
-    if (effect !== 'none') {
-      // Insert Web Audio API processing between mic and peer connection
-      const actx = new AudioContext()
-      audioContextRef.current = actx
-      const source = actx.createMediaStreamSource(stream)
-      const effectOutput = await applyVoiceEffect(actx, source, effect)
-      const destination = actx.createMediaStreamDestination()
-      effectOutput.connect(destination)
-      // Add processed tracks to pc instead of raw tracks
-      destination.stream.getTracks().forEach(track => pc.addTrack(track, destination.stream))
-    } else {
-      stream.getTracks().forEach(track => pc.addTrack(track, stream))
-    }
+    // Insert Web Audio API processing between mic and peer connection
+    const actx = new AudioContext()
+    audioContextRef.current = actx
+    const source = actx.createMediaStreamSource(stream)
+    const effectOutput = await applyVoiceEffect(actx, source, effect)
+    const destination = actx.createMediaStreamDestination()
+    effectOutput.connect(destination)
+    // Add processed tracks to pc instead of raw tracks
+    destination.stream.getTracks().forEach(track => pc.addTrack(track, destination.stream))
 
     // Handle remote audio
     pc.ontrack = (event) => {
@@ -317,7 +313,7 @@ export function CallProvider({ children }: { children: ReactNode }) {
 
   // --- Start a call (caller side) ---
 
-  const startCall = useCallback(async (conversationId: string, remoteUser: CallState['remoteUser'], voiceEffect: VoiceEffect = 'none') => {
+  const startCall = useCallback(async (conversationId: string, remoteUser: CallState['remoteUser'], voiceEffect: VoiceEffect = 'disguise') => {
     if (!session?.user?.id || !remoteUser || callStateRef.current.status !== 'idle') return
     voiceEffectRef.current = voiceEffect
 
