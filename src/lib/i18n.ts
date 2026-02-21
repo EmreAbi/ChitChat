@@ -76,8 +76,11 @@ const translations: Record<Lang, Record<string, string>> = {
     // New Chat
     'newChat.title': 'Direct Channel',
     'newChat.contacts': 'contacts',
-    'newChat.searchPlaceholder': 'Search contacts...',
-    'newChat.noResults': 'No contacts found',
+    'newChat.searchPlaceholder': 'Search users to add...',
+    'newChat.noResults': 'No users found',
+    'newChat.addContact': 'Add',
+    'newChat.noContacts': 'No contacts yet. Search to add people.',
+    'newChat.removeContact': 'Remove',
 
     // New Room
     'newGroup.title': 'Room Channel',
@@ -290,8 +293,11 @@ const translations: Record<Lang, Record<string, string>> = {
     // New Chat
     'newChat.title': 'Direkt Kanal',
     'newChat.contacts': 'kisi',
-    'newChat.searchPlaceholder': 'Kisi ara...',
-    'newChat.noResults': 'Kisi bulunamadi',
+    'newChat.searchPlaceholder': 'Eklemek icin kullanici ara...',
+    'newChat.noResults': 'Kullanici bulunamadi',
+    'newChat.addContact': 'Ekle',
+    'newChat.noContacts': 'Henuz kisi yok. Eklemek icin arayin.',
+    'newChat.removeContact': 'Cikar',
 
     // New Room
     'newGroup.title': 'Oda Kanali',

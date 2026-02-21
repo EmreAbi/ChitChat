@@ -11,7 +11,7 @@ export default function NewRoomPage() {
   const navigate = useNavigate()
   const { session } = useAuth()
   const { t } = useT()
-  const [users, setUsers] = useState<Profile[]>([])
+  const [contacts, setContacts] = useState<Profile[]>([])
   const [selected, setSelected] = useState<Set<string>>(new Set())
   const [search, setSearch] = useState('')
   const [groupName, setGroupName] = useState('')
@@ -20,29 +20,35 @@ export default function NewRoomPage() {
   const [submitError, setSubmitError] = useState('')
 
   useEffect(() => {
-    async function fetchUsers() {
+    async function fetchContacts() {
+      if (!session) return
       const { data } = await supabase
-        .from('profiles')
-        .select('*')
-        .neq('id', session?.user.id ?? '')
-        .order('display_name')
-      if (data) setUsers(data)
+        .from('contacts')
+        .select('contact_user_id, profiles!contacts_contact_user_id_fkey(*)')
+        .eq('user_id', session.user.id)
+        .order('created_at', { ascending: false })
+      if (data) {
+        const profiles = data
+          .map(c => (c as unknown as { profiles: Profile }).profiles)
+          .filter(Boolean)
+        setContacts(profiles)
+      }
       setLoading(false)
     }
-    fetchUsers()
+    fetchContacts()
   }, [session])
 
   const selectedUsers = useMemo(
-    () => users.filter(user => selected.has(user.id)),
-    [users, selected],
+    () => contacts.filter(user => selected.has(user.id)),
+    [contacts, selected],
   )
 
   const filtered = useMemo(() => {
-    if (!search) return users
-    return users.filter(user =>
+    if (!search) return contacts
+    return contacts.filter(user =>
       user.display_name.toLowerCase().includes(search.toLowerCase()),
     )
-  }, [search, users])
+  }, [search, contacts])
 
   function toggleUser(userId: string) {
     setSelected(prev => {
@@ -90,7 +96,7 @@ export default function NewRoomPage() {
       return
     }
 
-    const selectedNames = users
+    const selectedNames = contacts
       .filter(u => selected.has(u.id))
       .map(u => u.display_name)
       .join(', ')
@@ -187,7 +193,9 @@ export default function NewRoomPage() {
             {loading ? (
               <LoadingSpinner className="my-10" />
             ) : filtered.length === 0 ? (
-              <p className="text-center text-sm text-text-muted py-8">{t('newGroup.noResults')}</p>
+              <p className="text-center text-sm text-text-muted py-8">
+                {contacts.length === 0 ? t('newChat.noContacts') : t('newGroup.noResults')}
+              </p>
             ) : (
               filtered.map(user => (
                 <button
